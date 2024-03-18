@@ -13,12 +13,31 @@ public class Employee {
         this.entryTime = entryTime;
     }
 
+    public Employee() {
+
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public int getSalary() {
         return salary;
+    }
+
+    public void setSalary(int salary) {
+        this.salary = salary;
     }
 
     public LocalDateTime getEntryTime() {
         return entryTime;
     }
 
+    public void setEntryTime(LocalDateTime entryTime) {
+        this.entryTime = entryTime;
+    }
 }
