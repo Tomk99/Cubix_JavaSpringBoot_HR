@@ -6,12 +6,12 @@ spring:
 
 hr:
   salary:
-    aTier:
+    - tier: aTier
       yearLimit: 10
       raisePercent: 10
-    bTier:
+    - tier: bTier
       yearLimit: 5
       raisePercent: 5
-    cTier:
-      yearLimit: 2
+    - tier: cTier
+      yearLimit: 2.5
       raisePercent: 2

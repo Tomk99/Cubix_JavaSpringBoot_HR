@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Profile("smart")
@@ -19,11 +20,19 @@ public class SmartEmployeeService implements EmployeeService{
 
     @Override
     public int getPayRaisePercent(Employee employee) {
-        int timeSinceEntry = LocalDateTime.now().getYear() - employee.getEntryTime().getYear();
-        ConfigurationProperties.Salary configSalary = config.getSalary();
-        if (timeSinceEntry > configSalary.getaTier().getYearLimit()) return configSalary.getaTier().getRaisePercent();
-        else if (timeSinceEntry > configSalary.getbTier().getYearLimit()) return configSalary.getbTier().getRaisePercent();
-        else if (timeSinceEntry > configSalary.getcTier().getYearLimit()) return configSalary.getcTier().getRaisePercent();
-        else return 0;
+        LocalDateTime localDateTimeSinceEntry = LocalDateTime.now().minusYears(employee.getEntryTime().getYear()).minusDays(employee.getEntryTime().getDayOfYear());
+        double yearSinceEntry = localDateTimeSinceEntry.getYear();
+        double monthSinceEntry = localDateTimeSinceEntry.getMonthValue()/12.0;
+        double timeSinceEntry = yearSinceEntry+monthSinceEntry;
+        //System.out.println(timeSinceEntry);
+        List<ConfigurationProperties.SalaryTier> salaryConfig = config.getSalary();
+        int payRaisePercent = 0;
+
+        for (int i = salaryConfig.size()-1; i >= 0; i--) {
+            if (timeSinceEntry >= salaryConfig.get(i).getYearLimit()) {
+                payRaisePercent = salaryConfig.get(i).getRaisePercent();
+            }
+        }
+        return payRaisePercent;
     }
 }

@@ -23,8 +23,8 @@ public class HrApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        System.out.println(salaryService.getSalaryAfterRaise(new Employee(1L,100000,LocalDateTime.of(2010,1,1,8,0))));
-        System.out.println(salaryService.getSalaryAfterRaise(new Employee(2L,200000,LocalDateTime.of(2023,2,3,8,0))));
-        System.out.println(salaryService.getSalaryAfterRaise(new Employee(3L,200000,LocalDateTime.of(2020,1,2,8,0))));
+        System.out.println(salaryService.getSalaryAfterRaise(new Employee(1L,100000,LocalDateTime.of(2010,4,1,8,0))));
+        System.out.println(salaryService.getSalaryAfterRaise(new Employee(2L,100000,LocalDateTime.of(2021,10,3,8,0))));
+        System.out.println(salaryService.getSalaryAfterRaise(new Employee(3L,100000,LocalDateTime.of(2018,11,2,8,0))));
     }
 }
