@@ -13,7 +13,7 @@ import java.util.Map;
 @RequestMapping("/api/employees")
 public class EmployeeController {
 
-    private Map<Long, EmployeeDto> employees = new HashMap<>();
+    private final Map<Long, EmployeeDto> employees = new HashMap<>();
 
     {
         employees.put(1L, new EmployeeDto(1L,10000, LocalDateTime.of(2021,3,5,8,0)));
@@ -36,5 +36,25 @@ public class EmployeeController {
         if (employees.containsKey(employeeDto.getId())) return ResponseEntity.notFound().build();
         employees.put(employeeDto.getId(), employeeDto);
         return ResponseEntity.ok(employeeDto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EmployeeDto> modify(@PathVariable long id, @RequestBody EmployeeDto employeeDto) {
+        employeeDto.setId(id);
+        if (!employees.containsKey(id)) {
+            return ResponseEntity.notFound().build();
+        } else {
+            employees.put(id,employeeDto);
+            return ResponseEntity.ok(employeeDto);
+        }
+    }
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable long id) {
+        employees.remove(id);
+    }
+
+    @GetMapping("/filter")
+    public List<EmployeeDto> getAllEmployeesWithSalaryHigherThanN(@RequestParam int minSalary) {
+        return employees.values().stream().filter(employee -> employee.getSalary() > minSalary).toList();
     }
 }
