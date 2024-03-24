@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 
 public class EmployeeDto {
     private Long id;
+    private String name;
     private int salary;
     private LocalDateTime entryTime;
 
-    public EmployeeDto(Long id, int salary, LocalDateTime entryTime) {
+    public EmployeeDto(Long id, String name, int salary, LocalDateTime entryTime) {
         this.id = id;
+        this.name = name;
         this.salary = salary;
         this.entryTime = entryTime;
     }
@@ -19,6 +21,14 @@ public class EmployeeDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getSalary() {

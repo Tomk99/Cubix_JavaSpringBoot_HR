@@ -18,8 +18,8 @@ public class EmployeeTLController {
 
     private List<Employee> employees = new ArrayList<>();
     {
-        employees.add(new Employee(1L,10000, LocalDateTime.of(2021,3,5,8,0)));
-        employees.add(new Employee(2L,20000, LocalDateTime.of(2013,11,4,8,0)));
+        employees.add(new Employee(1L,"Kálmán Mixáth",10000, LocalDateTime.of(2021,3,5,8,0)));
+        employees.add(new Employee(2L,"Elek Teszt",20000, LocalDateTime.of(2013,11,4,8,0)));
     }
     @GetMapping
     public String getAll(Map<String, Object> model) {

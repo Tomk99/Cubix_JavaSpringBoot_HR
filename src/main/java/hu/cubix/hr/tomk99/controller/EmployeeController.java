@@ -16,8 +16,8 @@ public class EmployeeController {
     private final Map<Long, EmployeeDto> employees = new HashMap<>();
 
     {
-        employees.put(1L, new EmployeeDto(1L,10000, LocalDateTime.of(2021,3,5,8,0)));
-        employees.put(2L, new EmployeeDto(2L,20000, LocalDateTime.of(2013,11,4,8,0)));
+        employees.put(1L, new EmployeeDto(1L,"Elek Teszt",10000, LocalDateTime.of(2021,3,5,8,0)));
+        employees.put(2L, new EmployeeDto(2L,"Kálmán Mixáth",20000, LocalDateTime.of(2013,11,4,8,0)));
     }
     @GetMapping
     public List<EmployeeDto> getAll() {
