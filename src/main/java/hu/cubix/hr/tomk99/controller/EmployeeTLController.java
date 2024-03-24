@@ -2,9 +2,7 @@ package hu.cubix.hr.tomk99.controller;
 
 import hu.cubix.hr.tomk99.model.Employee;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,10 +26,24 @@ public class EmployeeTLController {
         return "employees";
     }
 
+    @GetMapping("/{id}")
+    public String getById(Map<String, Object> model, @PathVariable int id) {
+        model.put("employee",employees.get(id-1));
+        model.put("newEmployee",new Employee());
+        return "modify";
+    }
+
     @PostMapping
     public String createNew(Employee newEmployee) {
         newEmployee.setEntryTime(LocalDateTime.now());
         employees.add(newEmployee);
         return "redirect:/";
     }
+
+    @PutMapping("/{id}")
+    public String modify(Employee modifiedEmployee, @PathVariable int id) {
+        employees.remove(id);
+        return "redirect:/";
+    }
+
 }

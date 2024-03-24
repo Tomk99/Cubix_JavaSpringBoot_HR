@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employees</title>
+</head>
+<body>
+    <h1>Modify Employee</h1>
+    <ul>
+        <form th:action="@{/}" method="post" th:object="${newEmployee}">
+            id: <span th:text="${employee.id}"></span> <br>
+            Name: <input  th:value="${employee.name}"> <br>
+            Salary: <input th:value="${employee.salary}" type="number" min=0> <br>
+            Entry: <input th:value="${employee.entryTime}" type="datetime-local"> <br>
+            <button type="submit">Modify</button>
+        </form>
+    </ul>
+</body>
+</html>
