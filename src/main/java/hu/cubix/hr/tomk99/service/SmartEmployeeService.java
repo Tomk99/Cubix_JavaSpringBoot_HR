@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Service
 @Profile("smart")
@@ -20,19 +22,11 @@ public class SmartEmployeeService implements EmployeeService{
 
     @Override
     public int getPayRaisePercent(Employee employee) {
-        LocalDateTime localDateTimeSinceEntry = LocalDateTime.now().minusYears(employee.getEntryTime().getYear()).minusDays(employee.getEntryTime().getDayOfYear());
-        double yearSinceEntry = localDateTimeSinceEntry.getYear();
-        double monthSinceEntry = localDateTimeSinceEntry.getMonthValue()/12.0;
-        double timeSinceEntry = yearSinceEntry+monthSinceEntry;
-        //System.out.println(timeSinceEntry);
-        List<ConfigurationProperties.SalaryTier> salaryConfig = config.getSalary();
-        int payRaisePercent = 0;
+        double timeSinceEntry = ChronoUnit.DAYS.between(employee.getEntryTime(), LocalDateTime.now()) / 365.0;
+        ConfigurationProperties.SalaryTier.Smart smartConfig = config.getSalary().getSmart();
+        TreeMap<Double, Integer> raiseIntervals = smartConfig.getLimits();
 
-        for (int i = salaryConfig.size()-1; i >= 0; i--) {
-            if (timeSinceEntry >= salaryConfig.get(i).getYearLimit()) {
-                payRaisePercent = salaryConfig.get(i).getRaisePercent();
-            }
-        }
-        return payRaisePercent;
+        Map.Entry<Double, Integer> entry = raiseIntervals.floorEntry(timeSinceEntry);
+        return entry == null ? 0 : entry.getValue();
     }
 }

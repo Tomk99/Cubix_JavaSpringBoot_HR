@@ -6,12 +6,10 @@ spring:
 
 hr:
   salary:
-    - tier: aTier
-      yearLimit: 10
-      raisePercent: 10
-    - tier: bTier
-      yearLimit: 5
+    def:
       raisePercent: 5
-    - tier: cTier
-      yearLimit: 2.5
-      raisePercent: 2
+    smart:
+      limits:
+        10: 10
+        5: 5
+        2.5: 2

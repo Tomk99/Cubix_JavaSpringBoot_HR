@@ -2,48 +2,64 @@ package hu.cubix.hr.tomk99.config;
 
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.TreeMap;
 
 @org.springframework.boot.context.properties.ConfigurationProperties(prefix = "hr")
 @Component
 public class ConfigurationProperties {
-    public List<SalaryTier> salary;
+    public SalaryTier salary;
 
-    public List<SalaryTier> getSalary() {
+    public SalaryTier getSalary() {
         return salary;
     }
 
-    public void setSalary(List<SalaryTier> salary) {
+    public void setSalary(SalaryTier salary) {
         this.salary = salary;
     }
 
     public static class SalaryTier {
-        private String tier;
-        private double yearLimit;
-        private int raisePercent;
 
-        public String getTier() {
-            return tier;
+        public Def def;
+        public Smart smart;
+
+        public Def getDef() {
+            return def;
         }
 
-        public void setTier(String tier) {
-            this.tier = tier;
+        public void setDef(Def def) {
+            this.def = def;
         }
 
-        public double getYearLimit() {
-            return yearLimit;
+        public Smart getSmart() {
+            return smart;
         }
 
-        public void setYearLimit(double yearLimit) {
-            this.yearLimit = yearLimit;
+        public void setSmart(Smart smart) {
+            this.smart = smart;
         }
 
-        public int getRaisePercent() {
-            return raisePercent;
+        public static class Def {
+            private int raisePercent;
+
+            public int getRaisePercent() {
+                return raisePercent;
+            }
+
+            public void setRaisePercent(int raisePercent) {
+                this.raisePercent = raisePercent;
+            }
+        }
+        public static class Smart {
+            private TreeMap<Double, Integer> limits;
+
+            public TreeMap<Double, Integer> getLimits() {
+                return limits;
+            }
+
+            public void setLimits(TreeMap<Double, Integer> limits) {
+                this.limits = limits;
+            }
         }
 
-        public void setRaisePercent(int raisePercent) {
-            this.raisePercent = raisePercent;
-        }
     }
 }
