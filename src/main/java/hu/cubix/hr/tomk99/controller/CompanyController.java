@@ -32,13 +32,15 @@ public class CompanyController {
     }
 
     @GetMapping
-    public List<CompanyDto> getAll() {
-        return companies.values().stream().toList();
+    public List<CompanyDto> getAll(@RequestParam(required = false) boolean full) {
+        if (full) return companies.values().stream().toList();
+        else return companies.values().stream().map(v -> new CompanyDto(v.getId(),v.getRegistrationNumber(),v.getName(),v.getAddress())).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CompanyDto> getById(@PathVariable long id) {
+    public ResponseEntity<CompanyDto> getById(@PathVariable long id, @RequestParam(required = false) boolean full) {
         CompanyDto companyDto = companies.get(id);
+        if (!full) companyDto = new CompanyDto(companyDto.getId(), companyDto.getRegistrationNumber(), companyDto.getName(), companyDto.getAddress());
         if (companyDto != null) return ResponseEntity.ok(companyDto);
         else return ResponseEntity.notFound().build();
     }
