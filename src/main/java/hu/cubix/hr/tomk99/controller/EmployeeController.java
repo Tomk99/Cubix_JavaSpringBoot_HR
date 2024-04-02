@@ -1,6 +1,9 @@
 package hu.cubix.hr.tomk99.controller;
 
 import hu.cubix.hr.tomk99.dto.EmployeeDto;
+import hu.cubix.hr.tomk99.model.Employee;
+import hu.cubix.hr.tomk99.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +16,8 @@ import java.util.Map;
 @RequestMapping("/api/employees")
 public class EmployeeController {
 
+    @Autowired
+    private EmployeeService employeeService;
     private final Map<Long, EmployeeDto> employees = new HashMap<>();
 
     {
@@ -56,5 +61,10 @@ public class EmployeeController {
     @GetMapping("/filter")
     public List<EmployeeDto> getAllEmployeesWithSalaryHigherThanN(@RequestParam int minSalary) {
         return employees.values().stream().filter(employee -> employee.getSalary() > minSalary).toList();
+    }
+
+    @PostMapping("/payraise")
+    public int getPayRaisePercent(@RequestBody Employee employee) {
+        return employeeService.getPayRaisePercent(employee);
     }
 }
