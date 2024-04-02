@@ -26,13 +26,6 @@ public class EmployeeTLController {
         return "employees";
     }
 
-    @GetMapping("/{id}")
-    public String getById(Map<String, Object> model, @PathVariable int id) {
-        model.put("employee",employees.get(id-1));
-        model.put("newEmployee",new Employee());
-        return "modify";
-    }
-
     @PostMapping
     public String createNew(Employee newEmployee) {
         newEmployee.setEntryTime(LocalDateTime.now());
@@ -40,9 +33,26 @@ public class EmployeeTLController {
         return "redirect:/";
     }
 
-    @PutMapping("/{id}")
-    public String modify(Employee modifiedEmployee, @PathVariable int id) {
-        employees.remove(id);
+    @GetMapping("/deleteEmployee/{id}")
+    public String deleteEmployee(@PathVariable long id) {
+        employees.removeIf(e -> e.getId() == id);
+        return "redirect:/";
+    }
+
+    @GetMapping("/modifyEmployee/{id}")
+    public String getEmployeeById(@PathVariable long id, Map<String, Object> model) {
+        model.put("employee",employees.stream().filter(e -> e.getId() == id).findFirst().orElseThrow());
+        return "modify";
+    }
+
+    @PostMapping("/modifyEmployee")
+    public String modifyEmployee(Employee employee) {
+        for (int i = 0; i < employees.size(); i++) {
+            if (employees.get(i).getId().equals(employee.getId())) {
+                employees.set(i,employee);
+                break;
+            }
+        }
         return "redirect:/";
     }
 

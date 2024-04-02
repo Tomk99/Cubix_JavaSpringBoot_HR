@@ -31,7 +31,7 @@ public class EmployeeController {
         else return ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/{id}")
+    @PostMapping
     public ResponseEntity<EmployeeDto> createNew(@RequestBody EmployeeDto employeeDto) {
         if (employees.containsKey(employeeDto.getId())) return ResponseEntity.notFound().build();
         employees.put(employeeDto.getId(), employeeDto);

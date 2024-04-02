@@ -7,12 +7,13 @@
 <body>
     <h1>Modify Employee</h1>
     <ul>
-        <form th:action="@{/}" method="post" th:object="${newEmployee}">
-            id: <span th:text="${employee.id}"></span> <br>
-            Name: <input  th:value="${employee.name}"> <br>
-            Salary: <input th:value="${employee.salary}" type="number" min=0> <br>
-            Entry: <input th:value="${employee.entryTime}" type="datetime-local"> <br>
-            <button type="submit">Modify</button>
+        <form th:action="@{/modifyEmployee}" method="post" th:object="${employee}">
+            id: <span th:text="*{id}"></span> <br>
+            <input th:field="*{id}" type="hidden">
+            Name: <input  th:field="*{name}"> <br>
+            Salary: <input th:field="*{salary}" type="number" min=0> <br>
+            Entry: <input th:field="*{entryTime}" type="datetime-local"> <br>
+            <input type="submit" value="Save"></input>
         </form>
     </ul>
 </body>
