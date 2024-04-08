@@ -21,13 +21,13 @@ public class CompanyController {
     @GetMapping
     public List<CompanyDto> getAll(@RequestParam(required = false) boolean full) {
         if (full) return companies.values().stream().toList();
-        else return companies.values().stream().map(v -> new CompanyDto(v.getId(),v.getRegistrationNumber(),v.getName(),v.getAddress(),null)).toList();
+        else return companies.values().stream().map(CompanyController::createCompanyWithoutEmployees).toList();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CompanyDto> getById(@PathVariable long id, @RequestParam(required = false) boolean full) {
         CompanyDto companyDto = companies.get(id);
-        if (!full) companyDto = new CompanyDto(companyDto.getId(), companyDto.getRegistrationNumber(), companyDto.getName(), companyDto.getAddress(), null);
+        if (!full) companyDto = createCompanyWithoutEmployees(companyDto);
         if (companyDto != null) return ResponseEntity.ok(companyDto);
         else return ResponseEntity.notFound().build();
     }
@@ -80,5 +80,9 @@ public class CompanyController {
         }
         companyDto.setEmployees(newEmployees);
         return ResponseEntity.ok(companyDto);
+    }
+
+    private static CompanyDto createCompanyWithoutEmployees(CompanyDto companyDto) {
+        return new CompanyDto(companyDto.getId(), companyDto.getRegistrationNumber(), companyDto.getName(), companyDto.getAddress(), null);
     }
 }
