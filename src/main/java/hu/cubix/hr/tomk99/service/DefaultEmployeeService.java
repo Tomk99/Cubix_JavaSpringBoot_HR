@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Profile("!smart")
-public class DefaultEmployeeService implements EmployeeService{
+public class DefaultEmployeeService extends EmployeeService {
 
     private final ConfigurationProperties config;
 

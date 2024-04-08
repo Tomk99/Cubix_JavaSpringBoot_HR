@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 @Service
 @Profile("smart")
-public class SmartEmployeeService implements EmployeeService{
+public class SmartEmployeeService extends EmployeeService {
 
     private final ConfigurationProperties config;
 
