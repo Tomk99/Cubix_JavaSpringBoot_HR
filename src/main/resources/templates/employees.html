@@ -10,6 +10,7 @@
         <li th:each="employee: ${employees}">
             <span th:text="${employee.id}"></span>
             <a th:href="@{/modifyEmployee/{id}(id=${employee.id})}" th:text="${employee.name}"></a>
+            <span th:text="${employee.job}"></span>
             <span th:text="${employee.salary}"></span>
             <span th:text="${employee.entryTime}"></span>
             <a th:href="@{/deleteEmployee/{id}(id=${employee.id})}">Delete</a>
@@ -19,6 +20,7 @@
     <form th:action="@{/}" method="post" th:object="${newEmployee}">
         id: <input th:field="*{id}" type="number" min=0> <br>
         Name: <input th:field="*{name}"> <br>
+        Job: <input th:field="*{job}"> <br>
         Salary: <input th:field="*{salary}" type="number" min=0> <br>
         Entry: <input th:field="*{entryTime}" type="datetime-local"> <br>
         <button type="submit">Add</button>

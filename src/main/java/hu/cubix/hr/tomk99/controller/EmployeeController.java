@@ -3,6 +3,7 @@ package hu.cubix.hr.tomk99.controller;
 import hu.cubix.hr.tomk99.dto.EmployeeDto;
 import hu.cubix.hr.tomk99.model.Employee;
 import hu.cubix.hr.tomk99.service.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,8 @@ public class EmployeeController {
     private final Map<Long, EmployeeDto> employees = new HashMap<>();
 
     {
-        employees.put(1L, new EmployeeDto(1L,"Elek Teszt",10000, LocalDateTime.of(2021,3,5,8,0)));
-        employees.put(2L, new EmployeeDto(2L,"Kálmán Mixáth",20000, LocalDateTime.of(2013,11,4,8,0)));
+        employees.put(1L, new EmployeeDto(1L,"Elek Teszt","Java Backend Developer",10000, LocalDateTime.of(2021,3,5,8,0)));
+        employees.put(2L, new EmployeeDto(2L,"Kálmán Mixáth","Frontend Developer",20000, LocalDateTime.of(2013,11,4,8,0)));
     }
     @GetMapping
     public List<EmployeeDto> getAll() {
@@ -37,14 +38,14 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeDto> createNew(@RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<EmployeeDto> createNew(@RequestBody @Valid EmployeeDto employeeDto) {
         if (employees.containsKey(employeeDto.getId())) return ResponseEntity.notFound().build();
         employees.put(employeeDto.getId(), employeeDto);
         return ResponseEntity.ok(employeeDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeDto> modify(@PathVariable long id, @RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<EmployeeDto> modify(@PathVariable long id, @RequestBody @Valid EmployeeDto employeeDto) {
         employeeDto.setId(id);
         if (!employees.containsKey(id)) {
             return ResponseEntity.notFound().build();
@@ -64,7 +65,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/payraise")
-    public int getPayRaisePercent(@RequestBody Employee employee) {
+    public int getPayRaisePercent(@RequestBody @Valid Employee employee) {
         return employeeService.getPayRaisePercent(employee);
     }
 
