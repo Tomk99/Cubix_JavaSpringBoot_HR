@@ -11,9 +11,10 @@
             id: <span th:text="*{id}"></span> <br>
             <input th:field="*{id}" type="hidden">
             Name: <input  th:field="*{name}"> <br>
+            Job: <input  th:field="*{job}"> <br>
             Salary: <input th:field="*{salary}" type="number" min=0> <br>
             Entry: <input th:field="*{entryTime}" type="datetime-local"> <br>
-            <input type="submit" value="Save"></input>
+            <input type="submit" value="Save">
         </form>
     </ul>
 </body>
