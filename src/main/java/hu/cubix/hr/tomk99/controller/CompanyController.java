@@ -3,6 +3,7 @@ package hu.cubix.hr.tomk99.controller;
 import hu.cubix.hr.tomk99.dto.CompanyDto;
 import hu.cubix.hr.tomk99.dto.EmployeeDto;
 import hu.cubix.hr.tomk99.mapper.CompanyMapper;
+import hu.cubix.hr.tomk99.model.Company;
 import hu.cubix.hr.tomk99.model.Employee;
 import hu.cubix.hr.tomk99.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,22 +44,28 @@ public class CompanyController {
     }
 
     @PostMapping
-    public ResponseEntity<CompanyDto> createNew(@RequestBody CompanyDto companyDto) {
-        if (companies.containsKey(companyDto.id())) return ResponseEntity.badRequest().build();
-        companies.put(companyDto.id(),companyDto);
-        return ResponseEntity.ok(companyDto);
+    public CompanyDto createNew(@RequestBody CompanyDto companyDto) {
+        Company company = companyMapper.dtoToCompany(companyDto);
+        Company savedCompany = companyService.create(company);
+
+        if (savedCompany == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        return companyMapper.companyToDto(savedCompany);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CompanyDto> modify(@RequestBody CompanyDto companyDto, @PathVariable long id) {
-        if (!companies.containsKey(id)) return ResponseEntity.notFound().build();
-        companies.put(id, companyDto);
-        return ResponseEntity.ok(companyDto);
+    @PutMapping
+    public CompanyDto modify(@RequestBody CompanyDto companyDto) {
+        Company company = companyMapper.dtoToCompany(companyDto);
+        Company updatedCompany = companyService.update(company);
+
+        if (updatedCompany == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        return companyMapper.companyToDto(updatedCompany);
     }
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable long id) {
-        companies.remove(id);
+        companyService.delete(id);
     }
 
     @PostMapping("/{id}/employees")
