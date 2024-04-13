@@ -46,9 +46,8 @@ public class EmployeeController {
         return employeeMapper.employeeToDto(savedEmployee);
     }
 
-    @PutMapping("/{id}")
-    public EmployeeDto modify(@PathVariable long id, @RequestBody @Valid EmployeeDto employeeDto) {
-        employeeDto.setId(id);
+    @PutMapping
+    public EmployeeDto modify(@RequestBody @Valid EmployeeDto employeeDto) {
         Employee updatedEmployee = employeeService.update(employeeMapper.dtoToEmployee(employeeDto));
 
         if (updatedEmployee == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
