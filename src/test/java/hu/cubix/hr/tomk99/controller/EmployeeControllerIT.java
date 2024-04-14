@@ -23,7 +23,7 @@ public class EmployeeControllerIT {
     EmployeeDto basicEmployeeDto = new EmployeeDto(999, "John Doe", "Cashier", 30000, LocalDateTime.of(2020, 3, 3, 8, 0));
 
     @Test
-    void testThatCreatedEmployeeIsListed() throws Exception {
+    void testThatCreatedEmployeeIsListed() {
         List<EmployeeDto> employeeDtoListBefore = getAll();
         createEmployee(employeeDtoListBefore, basicEmployeeDto);
         List<EmployeeDto> employeeDtoListAfter = getAll();
@@ -33,7 +33,7 @@ public class EmployeeControllerIT {
     }
 
     @Test
-    void testThatEmployeeIsUpdated() throws Exception {
+    void testThatEmployeeIsUpdated() {
         List<EmployeeDto> employeeDtoListBeforeUpdate = getAll();
         EmployeeDto newEmployee = new EmployeeDto(1, "Jane Doe", "Cashier", 987654321, LocalDateTime.of(2020, 3, 3, 9, 0));
         updateEmployee(newEmployee);
