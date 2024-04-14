@@ -1,7 +1,5 @@
 package hu.cubix.hr.tomk99.model;
 
-import hu.cubix.hr.tomk99.dto.EmployeeDto;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +8,11 @@ public class Company {
     private int registrationNumber;
     private String name;
     private String address;
-    private List<EmployeeDto> employees = new ArrayList<>();
+    private List<Employee> employees = new ArrayList<>();
 
     public Company() {
     }
-    public Company(Long id, int registrationNumber, String name, String address, List<EmployeeDto> employees) {
+    public Company(Long id, int registrationNumber, String name, String address, List<Employee> employees) {
         this.id = id;
         this.registrationNumber = registrationNumber;
         this.name = name;
@@ -54,11 +52,11 @@ public class Company {
         this.address = address;
     }
 
-    public List<EmployeeDto> getEmployees() {
+    public List<Employee> getEmployees() {
         return employees;
     }
 
-    public void setEmployees(List<EmployeeDto> employees) {
+    public void setEmployees(List<Employee> employees) {
         this.employees = employees;
     }
 }

@@ -4,16 +4,12 @@ import hu.cubix.hr.tomk99.dto.CompanyDto;
 import hu.cubix.hr.tomk99.dto.EmployeeDto;
 import hu.cubix.hr.tomk99.mapper.CompanyMapper;
 import hu.cubix.hr.tomk99.model.Company;
-import hu.cubix.hr.tomk99.model.Employee;
 import hu.cubix.hr.tomk99.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,33 +65,23 @@ public class CompanyController {
     }
 
     @PostMapping("/{id}/employees")
-    public ResponseEntity<CompanyDto> addNewEmployee(@PathVariable long id, @RequestBody EmployeeDto employeeDto) {
-        CompanyDto companyDto = companies.get(id);
-        if (companyDto == null) {
-            return ResponseEntity.notFound().build();
-        }
-        companyDto.employeeDtos().add(employeeDto);
-        return ResponseEntity.ok(companyDto);
+    public CompanyDto addNewEmployee(@PathVariable long id, @RequestBody EmployeeDto employeeDto) {
+        Company company = companyService.addNewEmployee(id, companyMapper.dtoToEmployee(employeeDto));
+        if (company == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return companyMapper.companyToDto(company);
     }
 
     @DeleteMapping("/{id}/employees/{employeeId}")
-    public ResponseEntity<CompanyDto> deleteEmployeeFromCompany(@PathVariable long id, @PathVariable long employeeId) {
-        CompanyDto companyDto = companies.get(id);
-        if (companyDto == null) {
-            return ResponseEntity.notFound().build();
-        }
-        companyDto.employeeDtos().removeIf(e -> e.id() == employeeId);
-        return ResponseEntity.ok(companies.get(id));
+    public void deleteEmployeeFromCompany(@PathVariable long id, @PathVariable long employeeId) {
+        if (companyService.findById(id) == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        boolean foundIdMatch = companyService.deleteEmployeeFromCompany(id, employeeId);
+        if (!foundIdMatch) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/{id}/employees")
-    public ResponseEntity<CompanyDto> replaceEmployees(@PathVariable long id, @RequestBody List<EmployeeDto> newEmployees) {
-        CompanyDto companyDto = companies.get(id);
-        if (companyDto == null) {
-            return ResponseEntity.notFound().build();
-        }
-        //companyDto.setEmployees(newEmployees);
-        return ResponseEntity.ok(companyDto);
+    public CompanyDto replaceEmployees(@PathVariable long id, @RequestBody List<EmployeeDto> newEmployees) {
+        if (companyService.findById(id) == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return companyMapper.companyToDto(companyService.updateEmployees(id,companyMapper.dtosToEmployees(newEmployees)));
     }
 
     private static CompanyDto createCompanyWithoutEmployees(CompanyDto companyDto) {
