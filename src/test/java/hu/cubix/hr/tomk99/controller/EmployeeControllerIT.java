@@ -33,6 +33,14 @@ public class EmployeeControllerIT {
     }
 
     @Test
+    void testCreateWithWrongData() {
+        EmployeeDto wrongEmployeeForm = new EmployeeDto(1000, "", "Cashier", 40000, LocalDateTime.of(2020, 3, 3, 8, 0));
+        EmployeeDto wrongEmployeeForm2 = new EmployeeDto(1001, "John Doe", "", 40000, LocalDateTime.of(2020, 3, 3, 8, 0));
+        webTestClient.post().uri(BASE_URI).bodyValue(wrongEmployeeForm).exchange().expectStatus().isBadRequest();
+        webTestClient.post().uri(BASE_URI).bodyValue(wrongEmployeeForm2).exchange().expectStatus().isBadRequest();
+    }
+
+    @Test
     void testThatEmployeeIsUpdated() {
         List<EmployeeDto> employeeDtoListBeforeUpdate = getAll();
         EmployeeDto newEmployee = new EmployeeDto(1, "Jane Doe", "Cashier", 987654321, LocalDateTime.of(2020, 3, 3, 9, 0));
@@ -40,6 +48,14 @@ public class EmployeeControllerIT {
         List<EmployeeDto> employeeDtoListAfterUpdate = getAll();
         assertThat(employeeDtoListBeforeUpdate.size()).isEqualTo(employeeDtoListAfterUpdate.size());
         assertThat(employeeDtoListAfterUpdate.get((int) newEmployee.id()-1).salary()).isEqualTo(987654321);
+    }
+
+    @Test
+    void testUpdateWithWrongData() {
+        EmployeeDto wrongBody = new EmployeeDto(1000, "", "Cashier", 40000, LocalDateTime.of(2020, 3, 3, 8, 0));
+        EmployeeDto wrongBody2 = new EmployeeDto(9999, "Jane Doe", "Cashier", 40000, LocalDateTime.of(2020, 3, 3, 8, 0));
+        webTestClient.put().uri(BASE_URI).bodyValue(wrongBody).exchange().expectStatus().isBadRequest();
+        webTestClient.put().uri(BASE_URI).bodyValue(wrongBody2).exchange().expectStatus().isNotFound();
     }
 
 
