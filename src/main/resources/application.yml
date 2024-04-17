@@ -4,7 +4,7 @@ spring:
   profiles:
     active: smart
   datasource:
-    url: jdbc:postgresql://localhost:5432/cubix-airport
+    url: jdbc:postgresql://localhost:5432/hr
     username: postgres
     password: nemmondommeg
   jpa:

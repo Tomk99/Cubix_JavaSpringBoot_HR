@@ -33,10 +33,9 @@ public class CompanyController {
 
     @GetMapping("/{id}")
     public CompanyDto getById(@PathVariable long id, @RequestParam(required = false) boolean full) {
-        CompanyDto companyDto = companyMapper.companyToDto(companyService.findById(id));
+        CompanyDto companyDto = companyMapper.companyToDto(companyService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
         if (!full) companyDto = createCompanyWithoutEmployees(companyDto);
-        if (companyDto != null) return companyDto;
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return companyDto;
     }
 
     @PostMapping
@@ -49,9 +48,10 @@ public class CompanyController {
         return companyMapper.companyToDto(savedCompany);
     }
 
-    @PutMapping
-    public CompanyDto modify(@RequestBody CompanyDto companyDto) {
-        Company company = companyMapper.dtoToCompany(companyDto);
+    @PutMapping("/{id}")
+    public CompanyDto modify(@PathVariable long id, @RequestBody CompanyDto companyDto) {
+        CompanyDto idModifiedCompanyDto = new CompanyDto(id, companyDto.registrationNumber(), companyDto.name(), companyDto.address(), companyDto.employees());
+        Company company = companyMapper.dtoToCompany(idModifiedCompanyDto);
         Company updatedCompany = companyService.update(company);
 
         if (updatedCompany == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -73,14 +73,14 @@ public class CompanyController {
 
     @DeleteMapping("/{id}/employees/{employeeId}")
     public void deleteEmployeeFromCompany(@PathVariable long id, @PathVariable long employeeId) {
-        if (companyService.findById(id) == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (companyService.findById(id).isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         boolean foundIdMatch = companyService.deleteEmployeeFromCompany(id, employeeId);
         if (!foundIdMatch) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/{id}/employees")
     public CompanyDto replaceEmployees(@PathVariable long id, @RequestBody List<EmployeeDto> newEmployees) {
-        if (companyService.findById(id) == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (companyService.findById(id).isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return companyMapper.companyToDto(companyService.updateEmployees(id,companyMapper.dtosToEmployees(newEmployees)));
     }
 

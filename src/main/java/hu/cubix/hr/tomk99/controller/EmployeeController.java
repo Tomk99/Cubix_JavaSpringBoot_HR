@@ -6,6 +6,7 @@ import hu.cubix.hr.tomk99.model.Employee;
 import hu.cubix.hr.tomk99.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,23 @@ public class EmployeeController {
     @GetMapping("/filterByMinSalary")
     public List<EmployeeDto> getAllEmployeesWithSalaryHigherThanN(@RequestParam int minSalary) {
         return employeeMapper.employeesToDtos(employeeService.filterByMinSalary(minSalary));
+    }
+
+    @GetMapping("/filterByJob")
+    public List<EmployeeDto> getEmployeesByJob(@RequestParam String job) {
+        return employeeMapper.employeesToDtos(employeeService.filterByJob(job));
+    }
+
+    @GetMapping("/filterByNamePrefix")
+    public List<EmployeeDto> getEmployeesByNamePrefix(@RequestParam String namePrefix) {
+        return employeeMapper.employeesToDtos(employeeService.filterByNamePrefix(namePrefix));
+    }
+
+    @GetMapping("/filterByDate")
+    public List<EmployeeDto> getEmployeesBetweenEntryDates(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return employeeMapper.employeesToDtos(employeeService.employeesBetweenStartEndEntryDate(startDate, endDate));
     }
 
     @PostMapping("/payraise")

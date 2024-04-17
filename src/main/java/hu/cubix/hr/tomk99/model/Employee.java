@@ -1,8 +1,6 @@
 package hu.cubix.hr.tomk99.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -15,12 +13,16 @@ public class Employee {
     private String job;
     private int salary;
     private LocalDateTime entryTime;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 
-    public Employee(String name, String job, int salary, LocalDateTime entryTime) {
+    public Employee(String name, String job, int salary, LocalDateTime entryTime, Company company) {
         this.name = name;
         this.job = job;
         this.salary = salary;
         this.entryTime = entryTime;
+        this.company = company;
     }
 
     public Employee() {
@@ -65,5 +67,13 @@ public class Employee {
 
     public void setEntryTime(LocalDateTime entryTime) {
         this.entryTime = entryTime;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 }
