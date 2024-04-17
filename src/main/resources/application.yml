@@ -3,6 +3,14 @@ spring:
     name: hr
   profiles:
     active: smart
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cubix-airport
+    username: postgres
+    password: nemmondommeg
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
 hr:
   salary:

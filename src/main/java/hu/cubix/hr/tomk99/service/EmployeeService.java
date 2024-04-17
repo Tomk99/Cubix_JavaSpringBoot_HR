@@ -1,54 +1,48 @@
 package hu.cubix.hr.tomk99.service;
 
-import hu.cubix.hr.tomk99.dto.EmployeeDto;
 import hu.cubix.hr.tomk99.model.Employee;
+import hu.cubix.hr.tomk99.repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @Service
 public abstract class EmployeeService {
 
-    private Map<Long, Employee> employees = new HashMap<>();
-
-    {
-        employees.put(1L, new Employee(1L,"Elek Teszt","Java Backend Developer",10000, LocalDateTime.of(2021,3,5,8,0)));
-        employees.put(2L, new Employee(2L,"Kálmán Mixáth","Frontend Developer",20000, LocalDateTime.of(2013,11,4,8,0)));
-    }
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     public List<Employee> findAll() {
-        return employees.values().stream().toList();
+        return employeeRepository.findAll();
     }
-    public Employee findById(long id) {
-        return employees.get(id);
+    public Optional<Employee> findById(long id) {
+        return employeeRepository.findById(id);
     }
 
     public Employee create(Employee employee) {
-        if (findById(employee.getId()) != null) {
+        if (findById(employee.getId()).isPresent()) {
             return null;
         }
         return save(employee);
     }
     public Employee update(Employee employee) {
-        if (findById(employee.getId()) == null) {
+        if (findById(employee.getId()).isEmpty()) {
             return null;
         }
         return save(employee);
     }
     public Employee save(Employee employee) {
-        employees.put(employee.getId(),employee);
-        return employee;
+        return employeeRepository.save(employee);
     }
 
     public void delete(long id) {
-        employees.remove(id);
+        employeeRepository.deleteById(id);
     }
 
     public List<Employee> filterByMinSalary(int minSalary) {
-        return findAll().stream().filter(e -> e.getSalary() > minSalary).toList();
+        return employeeRepository.findBySalaryGreaterThanEqual(minSalary);
     }
 
     public abstract int getPayRaisePercent(Employee employee);

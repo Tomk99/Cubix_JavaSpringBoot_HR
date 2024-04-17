@@ -1,16 +1,22 @@
 package hu.cubix.hr.tomk99.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+
 import java.time.LocalDateTime;
 
+@Entity
 public class Employee {
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private String job;
     private int salary;
     private LocalDateTime entryTime;
 
-    public Employee(Long id, String name, String job, int salary, LocalDateTime entryTime) {
-        this.id = id;
+    public Employee(String name, String job, int salary, LocalDateTime entryTime) {
         this.name = name;
         this.job = job;
         this.salary = salary;
