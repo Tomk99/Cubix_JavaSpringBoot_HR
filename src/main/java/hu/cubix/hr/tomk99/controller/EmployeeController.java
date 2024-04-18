@@ -37,17 +37,12 @@ public class EmployeeController {
 
     @PostMapping
     public EmployeeDto createNew(@RequestBody @Valid EmployeeDto employeeDto) {
-        Employee employee = employeeMapper.dtoToEmployee(employeeDto);
-        Employee savedEmployee = employeeService.create(employee);
-
-        if (savedEmployee == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        return employeeMapper.employeeToDto(savedEmployee);
+        return employeeMapper.employeeToDto(employeeService.save(employeeMapper.dtoToEmployee(employeeDto)));
     }
 
     @PutMapping("/{id}")
     public EmployeeDto modify(@PathVariable long id, @RequestBody @Valid EmployeeDto employeeDto) {
-        EmployeeDto employee = new EmployeeDto(id, employeeDto.name(), employeeDto.job(), employeeDto.salary(), employeeDto.entryTime());
+        EmployeeDto employee = new EmployeeDto(id, employeeDto.getName(), employeeDto.getJob(), employeeDto.getSalary(), employeeDto.getEntryTime());
         Employee updatedEmployee = employeeService.update(employeeMapper.dtoToEmployee(employee));
 
         if (updatedEmployee == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);

@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.reactive.server.WebTestClient.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class EmployeeControllerIT {
@@ -20,52 +21,75 @@ public class EmployeeControllerIT {
     @Autowired
     WebTestClient webTestClient;
 
-    EmployeeDto basicEmployeeDto = new EmployeeDto(999, "John Doe", "Cashier", 30000, LocalDateTime.of(2020, 3, 3, 8, 0));
-
     @Test
-    void testThatCreatedEmployeeIsListed() {
+    void testThatNewValidEmployeeCanBeSaved() {
         List<EmployeeDto> employeeDtoListBefore = getAll();
-        createEmployee(employeeDtoListBefore, basicEmployeeDto);
+        EmployeeDto newEmployeeDto = new EmployeeDto(0L, "Asd", "asd", 12233, LocalDateTime.of(2020, 3, 3, 8, 0, 0));
+        saveEmployee(newEmployeeDto);
         List<EmployeeDto> employeeDtoListAfter = getAll();
 
-        assertThat(employeeDtoListAfter.subList(0,employeeDtoListBefore.size())).containsExactlyElementsOf(employeeDtoListBefore);
-        assertThat(employeeDtoListBefore.size()+1).isEqualTo(employeeDtoListAfter.size());
+        assertThat(employeeDtoListAfter.size()).isEqualTo(employeeDtoListBefore.size()+1);
+        assertThat(employeeDtoListAfter.get(employeeDtoListAfter.size()-1)).usingRecursiveComparison().ignoringFields("id").isEqualTo(newEmployeeDto);
     }
 
     @Test
-    void testCreateWithWrongData() {
-        EmployeeDto wrongEmployeeForm = new EmployeeDto(1000, "", "Cashier", 40000, LocalDateTime.of(2020, 3, 3, 8, 0));
-        EmployeeDto wrongEmployeeForm2 = new EmployeeDto(1001, "John Doe", "", 40000, LocalDateTime.of(2020, 3, 3, 8, 0));
-        webTestClient.post().uri(BASE_URI).bodyValue(wrongEmployeeForm).exchange().expectStatus().isBadRequest();
-        webTestClient.post().uri(BASE_URI).bodyValue(wrongEmployeeForm2).exchange().expectStatus().isBadRequest();
+    void testSaveWithWrongData() {
+        List<EmployeeDto> employeeDtoListBefore = getAll();
+        EmployeeDto wrongEmployeeForm = new EmployeeDto(0L, "", "Cashier", 40000, LocalDateTime.of(2020, 3, 3, 8, 0));
+        EmployeeDto wrongEmployeeForm2 = new EmployeeDto(0L, "John Doe", "", 40000, LocalDateTime.of(2020, 3, 3, 8, 0));
+        saveEmployee(wrongEmployeeForm).expectStatus().isBadRequest();
+        saveEmployee(wrongEmployeeForm2).expectStatus().isBadRequest();
+        List<EmployeeDto> employeeDtoListAfter = getAll();
+        assertThat(employeeDtoListAfter).hasSameSizeAs(employeeDtoListBefore);
     }
 
     @Test
     void testThatEmployeeIsUpdated() {
-        List<EmployeeDto> employeeDtoListBeforeUpdate = getAll();
-        EmployeeDto newEmployee = new EmployeeDto(1, "Jane Doe", "Cashier", 987654321, LocalDateTime.of(2020, 3, 3, 9, 0));
-        updateEmployee(newEmployee);
-        List<EmployeeDto> employeeDtoListAfterUpdate = getAll();
-        assertThat(employeeDtoListBeforeUpdate.size()).isEqualTo(employeeDtoListAfterUpdate.size());
-        assertThat(employeeDtoListAfterUpdate.get((int) newEmployee.id()-1).salary()).isEqualTo(987654321);
+        EmployeeDto newEmployee = new EmployeeDto(0L,"Asd","asd",12345,LocalDateTime.of(2020,3,3,8,0,0));
+        EmployeeDto savedEmployee = saveEmployee(newEmployee)
+                .expectStatus()
+                .isOk()
+                .expectBody(EmployeeDto.class)
+                .returnResult()
+                .getResponseBody();
+        List<EmployeeDto> employeeDtoListBefore = getAll();
+        assert savedEmployee != null;
+        savedEmployee.setName("modified");
+        updateEmployee(savedEmployee).expectStatus().isOk();
+        List<EmployeeDto> employeeDtoListAfter = getAll();
+
+        assertThat(employeeDtoListAfter).hasSameSizeAs(employeeDtoListBefore);
+        assertThat(employeeDtoListAfter.get(employeeDtoListAfter.size()-1)).usingRecursiveComparison().isEqualTo(savedEmployee);
     }
 
     @Test
     void testUpdateWithWrongData() {
-        EmployeeDto wrongBody = new EmployeeDto(1000, "", "Cashier", 40000, LocalDateTime.of(2020, 3, 3, 8, 0));
-        EmployeeDto wrongBody2 = new EmployeeDto(9999, "Jane Doe", "Cashier", 40000, LocalDateTime.of(2020, 3, 3, 8, 0));
-        webTestClient.put().uri(BASE_URI).bodyValue(wrongBody).exchange().expectStatus().isBadRequest();
-        webTestClient.put().uri(BASE_URI).bodyValue(wrongBody2).exchange().expectStatus().isNotFound();
+        EmployeeDto newEmployee = new EmployeeDto(0L,"Asd","asd",12345,LocalDateTime.of(2020,3,3,8,0,0));
+        EmployeeDto savedEmployee = saveEmployee(newEmployee)
+                .expectStatus()
+                .isOk()
+                .expectBody(EmployeeDto.class)
+                .returnResult()
+                .getResponseBody();
+        List<EmployeeDto> employeeDtoListBefore = getAll();
+        EmployeeDto wrongEmployee = new EmployeeDto(0L, "", "asd", 40000, LocalDateTime.of(2020, 3, 3, 8, 0,0));
+        assert savedEmployee != null;
+        wrongEmployee.setId(savedEmployee.getId());
+        updateEmployee(wrongEmployee).expectStatus().isBadRequest();
+        List<EmployeeDto> employeeDtoListAfter = getAll();
+
+        assertThat(employeeDtoListAfter).hasSameSizeAs(employeeDtoListBefore);
+        assertThat(employeeDtoListAfter.get(employeeDtoListAfter.size()-1)).usingRecursiveComparison().isEqualTo(savedEmployee);
     }
 
 
     /****************************Additional Methods******************************/
-    private void createEmployee(List<EmployeeDto> employeeDtoList, EmployeeDto newEmployeeDto) {
-        long newId = 999;
-        if (employeeDtoList.size() > 0) {
-            newId = employeeDtoList.get(employeeDtoList.size()-1).id() + 1;
-        }
-        webTestClient.post().uri(BASE_URI).bodyValue(new EmployeeDto(newId,newEmployeeDto.name(),newEmployeeDto.job(),newEmployeeDto.salary(),newEmployeeDto.entryTime())).exchange().expectStatus().isOk();
+    private ResponseSpec saveEmployee(EmployeeDto newEmployeeDto) {
+
+        return webTestClient.post()
+                .uri(BASE_URI)
+                .bodyValue(newEmployeeDto)
+                .exchange();
     }
 
     private List<EmployeeDto> getAll() {
@@ -78,11 +102,14 @@ public class EmployeeControllerIT {
                 .returnResult()
                 .getResponseBody();
         assert employeeDtos != null;
-        employeeDtos.sort(Comparator.comparing(EmployeeDto::id));
+        employeeDtos.sort(Comparator.comparing(EmployeeDto::getId));
         return employeeDtos;
     }
 
-    private void updateEmployee(EmployeeDto newEmployee) {
-        webTestClient.put().uri(BASE_URI).bodyValue(newEmployee).exchange().expectStatus().isOk();
+    private ResponseSpec updateEmployee(EmployeeDto newEmployee) {
+        return webTestClient.put()
+                .uri(BASE_URI + "/" + newEmployee.getId())
+                .bodyValue(newEmployee)
+                .exchange();
     }
 }

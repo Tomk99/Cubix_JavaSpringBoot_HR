@@ -21,15 +21,8 @@ public abstract class EmployeeService {
     public Optional<Employee> findById(long id) {
         return employeeRepository.findById(id);
     }
-
-    public Employee create(Employee employee) {
-        if (findById(employee.getId()).isPresent()) {
-            return null;
-        }
-        return save(employee);
-    }
     public Employee update(Employee employee) {
-        if (findById(employee.getId()).isEmpty()) {
+        if (findById(employee.getEmployeeId()).isEmpty()) {
             return null;
         }
         return save(employee);

@@ -30,20 +30,20 @@ public class EmployeeTLController {
 
     @GetMapping("/deleteEmployee/{id}")
     public String deleteEmployee(@PathVariable long id) {
-        employees.removeIf(e -> e.getId() == id);
+        employees.removeIf(e -> e.getEmployeeId() == id);
         return "redirect:/";
     }
 
     @GetMapping("/modifyEmployee/{id}")
     public String getEmployeeById(@PathVariable long id, Map<String, Object> model) {
-        model.put("employee",employees.stream().filter(e -> e.getId() == id).findFirst().orElseThrow());
+        model.put("employee",employees.stream().filter(e -> e.getEmployeeId() == id).findFirst().orElseThrow());
         return "modify";
     }
 
     @PostMapping("/modifyEmployee")
     public String modifyEmployee(Employee employee) {
         for (int i = 0; i < employees.size(); i++) {
-            if (employees.get(i).getId().equals(employee.getId())) {
+            if (employees.get(i).getEmployeeId().equals(employee.getEmployeeId())) {
                 employees.set(i,employee);
                 break;
             }

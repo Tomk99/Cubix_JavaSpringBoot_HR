@@ -27,12 +27,8 @@ public class CompanyService {
     public Optional<Company> findById(long id) {
         return companyRepository.findById(id);
     }
-
-    public Company create(Company company) {
-        if (findById(company.getId()).isPresent()) {
-            return null;
-        }
-        return save(company);
+    public Company save(Company company) {
+        return companyRepository.save(company);
     }
     public Company update(Company company) {
         if (findById(company.getId()).isEmpty()) {
@@ -40,27 +36,34 @@ public class CompanyService {
         }
         return save(company);
     }
-    public Company save(Company company) {
-        return companyRepository.save(company);
-    }
     public void delete(long id) {
         companyRepository.deleteById(id);
     }
 
     public Company addNewEmployee(long id, Employee employee) {
         Company company = findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        employee.setCompany(companyRepository.getReferenceById(id));
+        company.addEmployee(employee);
         employeeRepository.save(employee);
         return company;
     }
 
     public Company updateEmployees(long id, List<Employee> employees) {
         Company company = findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-            company.setEmployees(employees);
-            return company;
+        company.getEmployees().forEach(e -> e.setCompany(null));
+        company.getEmployees().clear();
+
+        employees.forEach(e -> {
+            company.addEmployee(e);
+            employeeRepository.save(e);
+        });
+        return company;
     }
-    public boolean deleteEmployeeFromCompany(long companyId, long employeeId) {
-        Company companyById = findById(companyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return companyById.getEmployees().removeIf(e -> e.getId().equals(employeeId));
+    public Company deleteEmployeeFromCompany(long companyId, long employeeId) {
+        Company company = findById(companyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        employee.setCompany(null);
+        company.getEmployees().remove(employee);
+        employeeRepository.save(employee);
+        return company;
     }
 }

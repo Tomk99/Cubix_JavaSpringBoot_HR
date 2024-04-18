@@ -3,21 +3,22 @@ package hu.cubix.hr.tomk99.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 public class Employee {
     @Id
     @GeneratedValue
-    private Long id;
+    private Long employeeId;
     private String name;
     private String job;
     private int salary;
     private LocalDateTime entryTime;
     @ManyToOne
-    @JoinColumn(name = "company_id")
     private Company company;
 
-    public Employee(String name, String job, int salary, LocalDateTime entryTime, Company company) {
+    public Employee(long employeeId, String name, String job, int salary, LocalDateTime entryTime, Company company) {
+        this.employeeId = employeeId;
         this.name = name;
         this.job = job;
         this.salary = salary;
@@ -29,12 +30,12 @@ public class Employee {
 
     }
 
-    public Long getId() {
-        return id;
+    public Long getEmployeeId() {
+        return employeeId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setEmployeeId(Long id) {
+        this.employeeId = id;
     }
 
     public String getName() {
@@ -75,5 +76,18 @@ public class Employee {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return Objects.equals(employeeId, employee.employeeId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeId);
     }
 }
