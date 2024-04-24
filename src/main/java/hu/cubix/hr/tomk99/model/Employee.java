@@ -17,13 +17,12 @@ public class Employee {
     @ManyToOne
     private Company company;
 
-    public Employee(long employeeId, String name, String job, int salary, LocalDateTime entryTime, Company company) {
+    public Employee(long employeeId, String name, String job, int salary, LocalDateTime entryTime) {
         this.employeeId = employeeId;
         this.name = name;
         this.job = job;
         this.salary = salary;
         this.entryTime = entryTime;
-        this.company = company;
     }
 
     public Employee() {

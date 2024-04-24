@@ -2,8 +2,59 @@ package hu.cubix.hr.tomk99.dto;
 
 import java.util.List;
 
-public record CompanyDto(long id, int registrationNumber, String name, String address, List<EmployeeDto> employees) {
-    public CompanyDto() {
-        this(0,0,null,null,null);
+public class CompanyDto {
+
+    private long id;
+    private int registrationNumber;
+    private String name;
+    private String address;
+    private List<EmployeeDto> employees;
+
+    public CompanyDto(long id, int registrationNumber, String name, String address, List<EmployeeDto> employees) {
+        this.id = id;
+        this.registrationNumber = registrationNumber;
+        this.name = name;
+        this.address = address;
+        this.employees = employees;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public int getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public void setRegistrationNumber(int registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public List<EmployeeDto> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<EmployeeDto> employees) {
+        this.employees = employees;
     }
 }

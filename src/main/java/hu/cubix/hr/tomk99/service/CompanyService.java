@@ -1,5 +1,6 @@
 package hu.cubix.hr.tomk99.service;
 
+import hu.cubix.hr.tomk99.model.AverageSalaryByPosition;
 import hu.cubix.hr.tomk99.model.Company;
 import hu.cubix.hr.tomk99.model.Employee;
 import hu.cubix.hr.tomk99.repository.CompanyRepository;
@@ -64,5 +65,17 @@ public class CompanyService {
         company.getEmployees().remove(employee);
         employeeRepository.save(employee);
         return company;
+    }
+
+    public List<Company> findByEmployeeWithGreaterThanMinSalary(int minSalary) {
+        return companyRepository.findByEmployeeWithGreaterThanMinSalary(minSalary);
+    }
+
+    public List<Company> findByAboveMaxHeadcount(int maxHeadcount) {
+        return companyRepository.findByAboveMaxHeadcount(maxHeadcount);
+    }
+
+    public List<AverageSalaryByPosition> findAverageSalariesByPosition(long id) {
+        return companyRepository.findAverageSalariesByPosition(id);
     }
 }
