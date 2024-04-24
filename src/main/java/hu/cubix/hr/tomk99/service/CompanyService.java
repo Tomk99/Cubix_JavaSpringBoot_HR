@@ -53,8 +53,7 @@ public class CompanyService {
         company.getEmployees().clear();
 
         employees.forEach(e -> {
-            company.addEmployee(e);
-            employeeRepository.save(e);
+            company.addEmployee(employeeRepository.save(e));
         });
         return company;
     }

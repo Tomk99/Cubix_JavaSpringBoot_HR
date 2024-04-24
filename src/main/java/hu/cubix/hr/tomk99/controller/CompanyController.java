@@ -58,7 +58,7 @@ public class CompanyController {
     }
 
     @PostMapping("/{id}/employees")
-    public CompanyDto addNewEmployee(@PathVariable long id, @RequestBody EmployeeDto employeeDto) {
+    public CompanyDto addNewEmployee(@PathVariable long id, @RequestBody @Valid EmployeeDto employeeDto) {
         Company company = companyService.addNewEmployee(id, companyMapper.dtoToEmployee(employeeDto));
         return companyMapper.companyToDto(company);
     }
@@ -70,7 +70,7 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}/employees")
-    public CompanyDto replaceEmployees(@PathVariable long id, @RequestBody List<EmployeeDto> newEmployees) {
+    public CompanyDto replaceEmployees(@PathVariable long id, @RequestBody @Valid List<EmployeeDto> newEmployees) {
         return companyMapper.companyToDto(companyService.updateEmployees(id,companyMapper.dtosToEmployees(newEmployees)));
     }
 
