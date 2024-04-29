@@ -1,9 +1,6 @@
 package hu.cubix.hr.tomk99.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +17,11 @@ public class Company {
     @OneToMany(mappedBy = "company")
     private List<Employee> employees = new ArrayList<>();
 
+    @ManyToOne
+    private CompanyType companyType;
     public Company() {
     }
-    public Company(long id, int registrationNumber, String name, String address, List<Employee> employees) {
+    public Company(Long id, int registrationNumber, String name, String address, List<Employee> employees) {
         this.id = id;
         this.registrationNumber = registrationNumber;
         this.name = name;
@@ -68,6 +67,14 @@ public class Company {
 
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
+    }
+
+    public CompanyType getCompanyType() {
+        return companyType;
+    }
+
+    public void setCompanyType(CompanyType companyType) {
+        this.companyType = companyType;
     }
 
     public void addEmployee(Employee employee) {

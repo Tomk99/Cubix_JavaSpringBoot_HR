@@ -6,6 +6,7 @@ import hu.cubix.hr.tomk99.mapper.CompanyMapper;
 import hu.cubix.hr.tomk99.model.AverageSalaryByPosition;
 import hu.cubix.hr.tomk99.model.Company;
 import hu.cubix.hr.tomk99.service.CompanyService;
+import hu.cubix.hr.tomk99.service.SalaryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,8 @@ public class CompanyController {
     CompanyService companyService;
     @Autowired
     CompanyMapper companyMapper;
+    @Autowired
+    SalaryService salaryService;
 
     @GetMapping
     public List<CompanyDto> getAll(@RequestParam(required = false) Optional<Boolean> full) {
@@ -90,6 +93,11 @@ public class CompanyController {
     @GetMapping("/{id}/orderBySalaries")
     public List<AverageSalaryByPosition> findAverageSalariesByPosition(@PathVariable long id) {
         return companyService.findAverageSalariesByPosition(id);
+    }
+
+    @PutMapping("/{id}/raiseMinSalary/{positionName}/{minSalary}")
+    public void updateMinSalary(@PathVariable long id, @PathVariable String positionName, @PathVariable int minSalary) {
+        salaryService.raiseMinSalary(id, positionName, minSalary);
     }
 
     private static CompanyDto createCompanyWithoutEmployees(CompanyDto companyDto) {

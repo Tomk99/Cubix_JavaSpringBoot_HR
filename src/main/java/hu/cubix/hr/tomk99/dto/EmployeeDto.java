@@ -17,6 +17,7 @@ public class EmployeeDto {
     private int salary;
     @Past
     private LocalDateTime entryTime;
+    private CompanyDto company;
     public EmployeeDto() {
     }
 
@@ -66,6 +67,14 @@ public class EmployeeDto {
 
     public void setEntryTime(LocalDateTime entryTime) {
         this.entryTime = entryTime;
+    }
+
+    public CompanyDto getCompany() {
+        return company;
+    }
+
+    public void setCompany(CompanyDto company) {
+        this.company = company;
     }
 
     @Override

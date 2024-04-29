@@ -11,10 +11,12 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface EmployeeMapper {
 
-    public List<EmployeeDto> employeesToDtos(List<Employee> employees);
+    List<EmployeeDto> employeesToDtos(List<Employee> employees);
     @Mapping(target = "id",source = "employeeId")
-    public EmployeeDto employeeToDto(Employee employee);
+    @Mapping(target = "job",source = "position.name")
+    @Mapping(target = "company.employees", ignore = true)
+    EmployeeDto employeeToDto(Employee employee);
 
     @InheritInverseConfiguration
-    public Employee dtoToEmployee(EmployeeDto employeeDto);
+    Employee dtoToEmployee(EmployeeDto employeeDto);
 }

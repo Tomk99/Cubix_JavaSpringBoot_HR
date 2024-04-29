@@ -6,16 +6,16 @@ import hu.cubix.hr.tomk99.model.Employee;
 import hu.cubix.hr.tomk99.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -55,8 +55,10 @@ public class EmployeeController {
     }
 
     @GetMapping("/filterByMinSalary")
-    public List<EmployeeDto> getAllEmployeesWithSalaryHigherThanN(@RequestParam int minSalary) {
-        return employeeMapper.employeesToDtos(employeeService.filterByMinSalary(minSalary));
+    public List<EmployeeDto> getAllEmployeesWithSalaryHigherThanN(@RequestParam int minSalary, @SortDefault("employeeId") Pageable pageable) {
+        Page<Employee> employeePage = employeeService.filterByMinSalary(minSalary, pageable);
+        List<Employee> employees = employeePage.getContent();
+        return employeeMapper.employeesToDtos(employees);
     }
 
     @GetMapping("/filterByJob")

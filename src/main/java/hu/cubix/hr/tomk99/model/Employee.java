@@ -11,16 +11,17 @@ public class Employee {
     @GeneratedValue
     private Long employeeId;
     private String name;
-    private String job;
     private int salary;
     private LocalDateTime entryTime;
     @ManyToOne
     private Company company;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private Position position;
 
-    public Employee(long employeeId, String name, String job, int salary, LocalDateTime entryTime) {
+    public Employee(Long employeeId, String name, Position position, int salary, LocalDateTime entryTime) {
         this.employeeId = employeeId;
         this.name = name;
-        this.job = job;
+        this.position = position;
         this.salary = salary;
         this.entryTime = entryTime;
     }
@@ -45,14 +46,6 @@ public class Employee {
         this.name = name;
     }
 
-    public String getJob() {
-        return job;
-    }
-
-    public void setJob(String job) {
-        this.job = job;
-    }
-
     public int getSalary() {
         return salary;
     }
@@ -75,6 +68,14 @@ public class Employee {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
     }
 
     @Override

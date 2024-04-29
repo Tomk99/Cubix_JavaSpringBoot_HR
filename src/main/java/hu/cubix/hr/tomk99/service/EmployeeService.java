@@ -3,6 +3,8 @@ package hu.cubix.hr.tomk99.service;
 import hu.cubix.hr.tomk99.model.Employee;
 import hu.cubix.hr.tomk99.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,12 +37,12 @@ public abstract class EmployeeService {
         employeeRepository.deleteById(id);
     }
 
-    public List<Employee> filterByMinSalary(int minSalary) {
-        return employeeRepository.findBySalaryGreaterThanEqual(minSalary);
+    public Page<Employee> filterByMinSalary(int minSalary, Pageable pageable) {
+        return employeeRepository.findBySalaryGreaterThanEqual(minSalary, pageable);
     }
 
-    public List<Employee> filterByJob(String job) {
-        return employeeRepository.findByJob(job);
+    public List<Employee> filterByJob(String jobTitle) {
+        return employeeRepository.findByPositionName(jobTitle);
     }
 
     public List<Employee> filterByNamePrefix(String namePrefix) {

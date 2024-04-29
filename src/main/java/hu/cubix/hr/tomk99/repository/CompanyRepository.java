@@ -10,16 +10,16 @@ import java.util.List;
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     @Query("select distinct c from Company c join c.employees e where e.salary > :minSalary")
-    public List<Company> findByEmployeeWithGreaterThanMinSalary(int minSalary);
+    List<Company> findByEmployeeWithGreaterThanMinSalary(int minSalary);
 
     @Query("select c from Company c where size(c.employees) > :maxHeadcount")
-    public List<Company> findByAboveMaxHeadcount(int maxHeadcount);
+    List<Company> findByAboveMaxHeadcount(int maxHeadcount);
 
-    @Query("select e.job as position, avg(e.salary) as averageSalary "
+    @Query("select e.position.name as position, avg(e.salary) as averageSalary "
             + "from Company c "
             + "inner join c.employees e "
             + "where c.id = :companyId "
-            + "group by e.job "
+            + "group by e.position.name "
             + "order by averageSalary desc")
-    public List<AverageSalaryByPosition> findAverageSalariesByPosition(long companyId);
+    List<AverageSalaryByPosition> findAverageSalariesByPosition(long companyId);
 }

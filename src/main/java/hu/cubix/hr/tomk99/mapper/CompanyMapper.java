@@ -11,23 +11,25 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CompanyMapper {
 
-    public List<CompanyDto> companiesToDtos(List<Company> companies);
+    List<CompanyDto> companiesToDtos(List<Company> companies);
     @IterableMapping(qualifiedByName = "summary")
-    public List<CompanyDto> companiesToSummaryDtos(List<Company> companies);
-    public CompanyDto companyToDto(Company company);
+    List<CompanyDto> companiesToSummaryDtos(List<Company> companies);
+    CompanyDto companyToDto(Company company);
 
     @Mapping(target = "employees", ignore = true)
     @Named("summary")
-    public CompanyDto companyToSummaryDto(Company company);
+    CompanyDto companyToSummaryDto(Company company);
 
-    public Company dtoToCompany(CompanyDto companyDto);
-    public List<EmployeeDto> employeesToDtos(List<Employee> employees);
+    Company dtoToCompany(CompanyDto companyDto);
+    List<EmployeeDto> employeesToDtos(List<Employee> employees);
 
     @Mapping(target = "id",source = "employeeId")
-    public EmployeeDto employeeToDto(Employee employee);
+    @Mapping(target = "job",source = "position.name")
+    @Mapping(target = "company", ignore = true)
+    EmployeeDto employeeToDto(Employee employee);
 
     @InheritInverseConfiguration
-    public Employee dtoToEmployee(EmployeeDto employeeDto);
+    Employee dtoToEmployee(EmployeeDto employeeDto);
 
-    public List<Employee> dtosToEmployees(List<EmployeeDto> newEmployees);
+    List<Employee> dtosToEmployees(List<EmployeeDto> newEmployees);
 }
