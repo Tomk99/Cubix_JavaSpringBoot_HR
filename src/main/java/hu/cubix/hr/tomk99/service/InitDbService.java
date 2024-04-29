@@ -31,6 +31,7 @@ public class InitDbService {
     public void initDb() {
         clearDb();
         insertTestData();
+        System.out.println("Database Initialized!");
     }
 
     private void clearDb() {
