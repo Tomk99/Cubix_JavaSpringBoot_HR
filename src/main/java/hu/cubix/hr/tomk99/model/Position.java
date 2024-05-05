@@ -2,7 +2,6 @@ package hu.cubix.hr.tomk99.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,10 +12,14 @@ public class Position {
     private int id;
     private String name;
     private Qualification qualification;
-    @OneToMany(mappedBy = "position")
-    private List<Employee> employees;
 
     public Position(String name, Qualification qualification) {
+        this.name = name;
+        this.qualification = qualification;
+    }
+
+    public Position(int id, String name, Qualification qualification) {
+        this.id = id;
         this.name = name;
         this.qualification = qualification;
     }
@@ -47,14 +50,6 @@ public class Position {
 
     public void setQualification(Qualification qualification) {
         this.qualification = qualification;
-    }
-
-    public List<Employee> getEmployees() {
-        return employees;
-    }
-
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
     }
 
     @Override

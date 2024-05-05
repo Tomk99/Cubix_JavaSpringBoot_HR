@@ -15,7 +15,7 @@ public class Employee {
     private LocalDateTime entryTime;
     @ManyToOne
     private Company company;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Position position;
 
     public Employee(Long employeeId, String name, Position position, int salary, LocalDateTime entryTime) {
@@ -77,7 +77,6 @@ public class Employee {
     public void setPosition(Position position) {
         this.position = position;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

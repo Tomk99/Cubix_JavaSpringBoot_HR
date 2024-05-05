@@ -1,5 +1,6 @@
 package hu.cubix.hr.tomk99.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -17,6 +18,7 @@ public class EmployeeDto {
     private int salary;
     @Past
     private LocalDateTime entryTime;
+    @JsonIgnore
     private CompanyDto company;
     public EmployeeDto() {
     }
@@ -82,11 +84,11 @@ public class EmployeeDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmployeeDto that = (EmployeeDto) o;
-        return id == that.id && salary == that.salary && Objects.equals(name, that.name) && Objects.equals(job, that.job) && Objects.equals(entryTime, that.entryTime);
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, job, salary, entryTime);
+        return Objects.hash(id);
     }
 }

@@ -79,8 +79,13 @@ public class EmployeeController {
     }
 
     @PostMapping("/payraise")
-    public int getPayRaisePercent(@RequestBody @Valid Employee employee) {
-        return employeeService.getPayRaisePercent(employee);
+    public int getPayRaisePercent(@RequestBody @Valid EmployeeDto employeeDto) {
+        return employeeService.getPayRaisePercent(employeeMapper.dtoToEmployee(employeeDto));
+    }
+
+    @PostMapping("/filterBySpecs")
+    public List<EmployeeDto> getAllBySpecs(@RequestBody EmployeeDto employeeSchema) {
+        return employeeMapper.employeesToDtos(employeeService.findEmployeesByExample(employeeMapper.dtoToEmployee(employeeSchema)));
     }
 
 }

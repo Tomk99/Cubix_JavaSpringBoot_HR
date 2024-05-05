@@ -5,6 +5,7 @@ import hu.cubix.hr.tomk99.dto.EmployeeDto;
 import hu.cubix.hr.tomk99.mapper.CompanyMapper;
 import hu.cubix.hr.tomk99.model.AverageSalaryByPosition;
 import hu.cubix.hr.tomk99.model.Company;
+import hu.cubix.hr.tomk99.repository.CompanyRepository;
 import hu.cubix.hr.tomk99.service.CompanyService;
 import hu.cubix.hr.tomk99.service.SalaryService;
 import jakarta.validation.Valid;
@@ -26,16 +27,19 @@ public class CompanyController {
     CompanyMapper companyMapper;
     @Autowired
     SalaryService salaryService;
+    @Autowired
+    CompanyRepository companyRepository;
 
     @GetMapping
     public List<CompanyDto> getAll(@RequestParam(required = false) Optional<Boolean> full) {
-        List<Company> companies = companyService.findAll();
+        List<Company> companies = full.orElse(false) ? companyRepository.findAllWithEmployees() : companyService.findAll();
         return mapCompanies(full, companies);
     }
 
     @GetMapping("/{id}")
     public CompanyDto getById(@PathVariable long id, @RequestParam(required = false) boolean full) {
-        Company company = companyService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Optional<Company> optionalCompany = full ? companyRepository.findByIdWithEmployees(id) : companyService.findById(id);
+        Company company = optionalCompany.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         if (!full) return companyMapper.companyToSummaryDto(company);
         return companyMapper.companyToDto(company);
     }

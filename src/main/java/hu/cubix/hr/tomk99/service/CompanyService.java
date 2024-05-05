@@ -8,6 +8,7 @@ import hu.cubix.hr.tomk99.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -28,36 +29,38 @@ public class CompanyService {
     public Optional<Company> findById(long id) {
         return companyRepository.findById(id);
     }
+    @Transactional
     public Company save(Company company) {
         return companyRepository.save(company);
     }
+    @Transactional
     public Company update(Company company) {
         if (findById(company.getId()).isEmpty()) {
             return null;
         }
         return save(company);
     }
+    @Transactional
     public void delete(long id) {
         companyRepository.deleteById(id);
     }
 
+    @Transactional
     public Company addNewEmployee(long id, Employee employee) {
         Company company = findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        company.addEmployee(employee);
-        employeeRepository.save(employee);
-        return company;
+        company.addEmployee(employeeRepository.save(employee));
+        return companyRepository.findByIdWithEmployees(id).orElse(null);
     }
-
+    @Transactional
     public Company updateEmployees(long id, List<Employee> employees) {
         Company company = findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         company.getEmployees().forEach(e -> e.setCompany(null));
         company.getEmployees().clear();
 
-        employees.forEach(e -> {
-            company.addEmployee(employeeRepository.save(e));
-        });
+        employees.forEach(e -> company.addEmployee(employeeRepository.save(e)));
         return company;
     }
+    @Transactional
     public Company deleteEmployeeFromCompany(long companyId, long employeeId) {
         Company company = findById(companyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
