@@ -9,10 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static hu.cubix.hr.tomk99.service.TimeoffRequestSpecifications.statusIsEqual;
 
 @Service
 public class TimeoffRequestService {
@@ -37,13 +36,7 @@ public class TimeoffRequestService {
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
-    public List<TimeoffRequest> findRequestsByExample(TimeoffRequest timeoffRequest) {
-        RequestStatus requestStatus = timeoffRequest.getRequestStatus();
-
-        Specification<TimeoffRequest> specs = Specification.where(null);
-
-        if (requestStatus != null) specs = specs.and(statusIsEqual(requestStatus));
-
-        return timeoffRequestRepository.findAll(specs);
+    public List<TimeoffRequest> findBySpecs(RequestStatus requestStatus, String namePrefix, LocalDateTime createTimeFrom, LocalDateTime createTimeUntil, LocalDate requestTimeFrom, LocalDate requestTimeUntil) {
+        return timeoffRequestRepository.findAllByRequestStatusAndApplicantNameStartingWith(requestStatus,namePrefix);
     }
 }

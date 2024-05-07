@@ -9,17 +9,19 @@ import java.util.Objects;
 public class TimeoffRequestDto {
     private long id;
     private long applicantId;
+    private long managerId;
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalDateTime requestCreateTime;
     private RequestStatus requestStatus;
 
-    public TimeoffRequestDto(long id, long applicantId, LocalDate startDate, LocalDate endDate, RequestStatus requestStatus) {
+    public TimeoffRequestDto(long id, long applicantId, long managerId, LocalDate startDate, LocalDate endDate, LocalDateTime requestCreateTime, RequestStatus requestStatus) {
         this.id = id;
         this.applicantId = applicantId;
+        this.managerId = managerId;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.requestCreateTime = LocalDateTime.now();
+        this.requestCreateTime = requestCreateTime;
         this.requestStatus = requestStatus;
     }
 
@@ -37,6 +39,14 @@ public class TimeoffRequestDto {
 
     public void setApplicantId(long applicantId) {
         this.applicantId = applicantId;
+    }
+
+    public long getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(long managerId) {
+        this.managerId = managerId;
     }
 
     public LocalDate getStartDate() {

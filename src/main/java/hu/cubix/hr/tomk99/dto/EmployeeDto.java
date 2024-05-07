@@ -20,7 +20,6 @@ public class EmployeeDto {
     private LocalDateTime entryTime;
     @JsonIgnore
     private CompanyDto company;
-
     private TimeoffRequestDto request;
     public EmployeeDto() {
     }

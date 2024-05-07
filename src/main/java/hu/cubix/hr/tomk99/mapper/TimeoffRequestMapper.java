@@ -15,6 +15,7 @@ public interface TimeoffRequestMapper{
     List<TimeoffRequest> DtosToRequests(List<TimeoffRequestDto> requestDtos);
 
     @Mapping(target = "applicantId", source = "applicant.employeeId")
+    @Mapping(target = "managerId", source = "manager.employeeId")
     TimeoffRequestDto requestToDto(TimeoffRequest request);
 
     @InheritInverseConfiguration

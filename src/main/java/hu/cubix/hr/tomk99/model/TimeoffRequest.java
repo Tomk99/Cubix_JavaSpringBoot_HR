@@ -13,6 +13,8 @@ public class TimeoffRequest {
     private long id;
     @ManyToOne
     private Employee applicant;
+    @ManyToOne
+    private Employee manager;
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalDateTime requestCreateTime;
@@ -22,9 +24,10 @@ public class TimeoffRequest {
 
     }
 
-    public TimeoffRequest(long id, Employee applicant, LocalDate startDate, LocalDate endDate, LocalDateTime requestCreateTime, RequestStatus requestStatus) {
+    public TimeoffRequest(long id, Employee applicant, Employee manager, LocalDate startDate, LocalDate endDate, LocalDateTime requestCreateTime, RequestStatus requestStatus) {
         this.id = id;
         this.applicant = applicant;
+        this.manager = manager;
         this.startDate = startDate;
         this.endDate = endDate;
         this.requestCreateTime = requestCreateTime;
@@ -45,6 +48,14 @@ public class TimeoffRequest {
 
     public void setApplicant(Employee applicant) {
         this.applicant = applicant;
+    }
+
+    public Employee getManager() {
+        return manager;
+    }
+
+    public void setManager(Employee manager) {
+        this.manager = manager;
     }
 
     public LocalDate getStartDate() {

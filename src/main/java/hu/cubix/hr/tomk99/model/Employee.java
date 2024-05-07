@@ -19,7 +19,10 @@ public class Employee {
     @ManyToOne(cascade = CascadeType.ALL)
     private Position position;
     @OneToMany(mappedBy = "applicant")
-    private List<TimeoffRequest> requests;
+    private List<TimeoffRequest> sentRequests;
+
+    @OneToMany(mappedBy = "manager")
+    private List<TimeoffRequest> receivedRequest;
 
     public Employee(Long employeeId, String name, Position position, int salary, LocalDateTime entryTime) {
         this.employeeId = employeeId;
@@ -81,12 +84,20 @@ public class Employee {
         this.position = position;
     }
 
-    public List<TimeoffRequest> getRequests() {
-        return requests;
+    public List<TimeoffRequest> getSentRequests() {
+        return sentRequests;
     }
 
-    public void setRequests(List<TimeoffRequest> requests) {
-        this.requests = requests;
+    public void setSentRequests(List<TimeoffRequest> requests) {
+        this.sentRequests = requests;
+    }
+
+    public List<TimeoffRequest> getReceivedRequest() {
+        return receivedRequest;
+    }
+
+    public void setReceivedRequest(List<TimeoffRequest> receivedRequest) {
+        this.receivedRequest = receivedRequest;
     }
 
     @Override
