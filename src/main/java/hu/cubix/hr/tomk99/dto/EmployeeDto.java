@@ -20,6 +20,8 @@ public class EmployeeDto {
     private LocalDateTime entryTime;
     @JsonIgnore
     private CompanyDto company;
+
+    private TimeoffRequestDto request;
     public EmployeeDto() {
     }
 
@@ -77,6 +79,14 @@ public class EmployeeDto {
 
     public void setCompany(CompanyDto company) {
         this.company = company;
+    }
+
+    public TimeoffRequestDto getRequest() {
+        return request;
+    }
+
+    public void setRequest(TimeoffRequestDto request) {
+        this.request = request;
     }
 
     @Override

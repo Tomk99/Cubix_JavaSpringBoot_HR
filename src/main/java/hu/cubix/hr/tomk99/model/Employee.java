@@ -3,6 +3,7 @@ package hu.cubix.hr.tomk99.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,6 +18,8 @@ public class Employee {
     private Company company;
     @ManyToOne(cascade = CascadeType.ALL)
     private Position position;
+    @OneToMany(mappedBy = "applicant")
+    private List<TimeoffRequest> requests;
 
     public Employee(Long employeeId, String name, Position position, int salary, LocalDateTime entryTime) {
         this.employeeId = employeeId;
@@ -77,6 +80,15 @@ public class Employee {
     public void setPosition(Position position) {
         this.position = position;
     }
+
+    public List<TimeoffRequest> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<TimeoffRequest> requests) {
+        this.requests = requests;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

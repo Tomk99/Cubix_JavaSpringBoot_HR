@@ -29,4 +29,9 @@ public class TimeoffRequestController {
     public void deleteById(@PathVariable long id) {
         timeoffRequestService.deleteById(id);
     }
+
+    @PostMapping("/filterBySpecs")
+    public List<TimeoffRequestDto> filterBySpecs(@RequestBody TimeoffRequestDto timeoffRequestDto) {
+        return timeoffRequestMapper.requestsToDtos(timeoffRequestService.findRequestsByExample(timeoffRequestMapper.dtoToRequest(timeoffRequestDto)));
+    }
 }
