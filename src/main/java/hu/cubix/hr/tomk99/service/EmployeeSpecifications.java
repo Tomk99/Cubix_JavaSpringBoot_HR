@@ -15,8 +15,8 @@ public class EmployeeSpecifications {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(Employee_.employeeId),id);
     }
 
-    public static Specification<Employee> containsName(String name) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get(Employee_.name)),"%"+name.toLowerCase()+"%");
+    public static Specification<Employee> containsName(String namePrefix) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get(Employee_.name)),namePrefix.toLowerCase()+"%");
     }
 
     public static Specification<Employee> exactMatchPositionName(String positionName) {
