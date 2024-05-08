@@ -21,15 +21,8 @@ public class TimeoffRequestService {
     @Autowired
     TimeoffRequestRepository timeoffRequestRepository;
 
-    public Page<TimeoffRequest> getAll(RequestStatus requestStatus, String namePrefix, LocalDateTime createTimeFrom, LocalDateTime createTimeUntil, LocalDate requestTimeFrom, LocalDate requestTimeUntil) {
-        List<TimeoffRequest> all = timeoffRequestRepository.findAll();
-        if (requestStatus != null) all = all.stream().filter(r -> r.getRequestStatus() == requestStatus).toList();
-        if (namePrefix != null) all = all.stream().filter(r -> r.getApplicant().getName().startsWith(namePrefix) || r.getManager().getName().startsWith(namePrefix)).toList();
-        if (createTimeFrom != null) all = all.stream().filter(r -> r.getRequestCreateTime().isAfter(createTimeFrom)).toList();
-        if (createTimeUntil != null) all = all.stream().filter(r -> r.getRequestCreateTime().isBefore(createTimeUntil)).toList();
-        if (requestTimeFrom != null) all = all.stream().filter(r -> r.getEndDate().isAfter(requestTimeFrom)).toList();
-        if (requestTimeUntil != null) all = all.stream().filter(r -> r.getStartDate().isBefore(requestTimeUntil)).toList();
-        return new PageImpl<>(all);
+    public Page<TimeoffRequest> getAll(RequestStatus requestStatus, String namePrefix, LocalDateTime createTimeFrom, LocalDateTime createTimeUntil, LocalDate requestTimeFrom, LocalDate requestTimeUntil, Pageable pageable) {
+        return timeoffRequestRepository.findAllWithCriteriaBuilder(requestStatus, namePrefix, createTimeFrom, createTimeUntil, requestTimeFrom, requestTimeUntil, pageable);
     }
 
     @Transactional
