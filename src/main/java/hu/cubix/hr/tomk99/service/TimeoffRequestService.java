@@ -3,7 +3,9 @@ package hu.cubix.hr.tomk99.service;
 import hu.cubix.hr.tomk99.model.*;
 import hu.cubix.hr.tomk99.repository.TimeoffRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +21,15 @@ public class TimeoffRequestService {
     @Autowired
     TimeoffRequestRepository timeoffRequestRepository;
 
-    public List<TimeoffRequest> getAll() {
-        return timeoffRequestRepository.findAll();
+    public Page<TimeoffRequest> getAll(RequestStatus requestStatus, String namePrefix, LocalDateTime createTimeFrom, LocalDateTime createTimeUntil, LocalDate requestTimeFrom, LocalDate requestTimeUntil) {
+        List<TimeoffRequest> all = timeoffRequestRepository.findAll();
+        if (requestStatus != null) all = all.stream().filter(r -> r.getRequestStatus() == requestStatus).toList();
+        if (namePrefix != null) all = all.stream().filter(r -> r.getApplicant().getName().startsWith(namePrefix) || r.getManager().getName().startsWith(namePrefix)).toList();
+        if (createTimeFrom != null) all = all.stream().filter(r -> r.getRequestCreateTime().isAfter(createTimeFrom)).toList();
+        if (createTimeUntil != null) all = all.stream().filter(r -> r.getRequestCreateTime().isBefore(createTimeUntil)).toList();
+        if (requestTimeFrom != null) all = all.stream().filter(r -> r.getEndDate().isAfter(requestTimeFrom)).toList();
+        if (requestTimeUntil != null) all = all.stream().filter(r -> r.getStartDate().isBefore(requestTimeUntil)).toList();
+        return new PageImpl<>(all);
     }
 
     @Transactional

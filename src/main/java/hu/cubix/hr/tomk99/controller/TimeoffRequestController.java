@@ -5,6 +5,7 @@ import hu.cubix.hr.tomk99.mapper.TimeoffRequestMapper;
 import hu.cubix.hr.tomk99.model.RequestStatus;
 import hu.cubix.hr.tomk99.service.TimeoffRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -21,8 +22,13 @@ public class TimeoffRequestController {
     TimeoffRequestMapper timeoffRequestMapper;
 
     @GetMapping
-    public List<TimeoffRequestDto> findAll() {
-        return timeoffRequestMapper.requestsToDtos(timeoffRequestService.getAll());
+    public List<TimeoffRequestDto> findAll(@RequestParam(required = false) RequestStatus requestStatus,
+                                           @RequestParam(required = false) String namePrefix,
+                                           @RequestParam(required = false) LocalDateTime createTimeFrom,
+                                           @RequestParam(required = false) LocalDateTime createTimeUntil,
+                                           @RequestParam(required = false) LocalDate requestTimeFrom,
+                                           @RequestParam(required = false) LocalDate requestTimeUntil) {
+        return timeoffRequestMapper.requestsToDtos(timeoffRequestService.getAll(requestStatus,namePrefix,createTimeFrom,createTimeUntil,requestTimeFrom,requestTimeUntil).getContent());
     }
     @PostMapping
     public TimeoffRequestDto createRequest(@RequestBody TimeoffRequestDto timeoffRequestDto) {
@@ -31,17 +37,5 @@ public class TimeoffRequestController {
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable long id) {
         timeoffRequestService.deleteById(id);
-    }
-
-    @GetMapping("/findBySpecs")
-    public List<TimeoffRequestDto> findBySpecs(
-            @RequestParam(required = false) RequestStatus requestStatus,
-            @RequestParam(required = false) String namePrefix,
-            @RequestParam(required = false) LocalDateTime createTimeFrom,
-            @RequestParam(required = false) LocalDateTime createTimeUntil,
-            @RequestParam(required = false) LocalDate requestTimeFrom,
-            @RequestParam(required = false) LocalDate requestTimeUntil
-            ) {
-        return timeoffRequestMapper.requestsToDtos(timeoffRequestService.findBySpecs(requestStatus,namePrefix,createTimeFrom,createTimeUntil,requestTimeFrom,requestTimeUntil));
     }
 }
