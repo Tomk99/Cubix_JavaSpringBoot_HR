@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSpecificationExecutor<Employee> {
     Page<Employee> findBySalaryGreaterThanEqual(int minSalary, Pageable pageable);
@@ -21,4 +22,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
     @Modifying
     @Query("update Employee e set e.salary = :minSalary where e.position.name = :positionName and e.company.id = :companyId and e.salary < :minSalary")
     void updateSalaries(long companyId, String positionName, int minSalary);
+
+    Optional<Employee> findByUsername(String username);
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -36,11 +37,25 @@ public class TimeoffRequestController {
         return timeoffRequestMapper.requestsToDtos(requestPage.getContent());
     }
     @PostMapping
+    @PreAuthorize("#timeoffRequestDto.applicantId == authentication.principal.employee.employeeId")
     public TimeoffRequestDto createRequest(@RequestBody TimeoffRequestDto timeoffRequestDto) {
-        return timeoffRequestMapper.requestToDto(timeoffRequestService.save(timeoffRequestMapper.dtoToRequest(timeoffRequestDto)));
+        return timeoffRequestMapper.requestToDto(timeoffRequestService.save(timeoffRequestMapper.dtoToRequest(timeoffRequestDto),timeoffRequestDto.getApplicantId()));
+    }
+    @PutMapping("/{id}")
+    @PreAuthorize("#timeoffRequestDto.applicantId == authentication.principal.employee.employeeId")
+    public TimeoffRequestDto modifyRequest(@PathVariable long id, @RequestBody TimeoffRequestDto timeoffRequestDto) {
+        return timeoffRequestMapper.requestToDto(timeoffRequestService.update(id,timeoffRequestMapper.dtoToRequest(timeoffRequestDto)));
     }
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable long id) {
         timeoffRequestService.deleteById(id);
+    }
+    @PutMapping("/acceptRequest/{id}")
+    public TimeoffRequestDto acceptRequest(@PathVariable long id) {
+        return timeoffRequestMapper.requestToDto(timeoffRequestService.acceptRequest(id));
+    }
+    @PutMapping("/rejectRequest/{id}")
+    public TimeoffRequestDto rejectRequest(@PathVariable long id) {
+        return timeoffRequestMapper.requestToDto(timeoffRequestService.rejectRequest(id));
     }
 }

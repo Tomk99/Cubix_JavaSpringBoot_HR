@@ -1,11 +1,9 @@
 package hu.cubix.hr.tomk99.service;
 
 import hu.cubix.hr.tomk99.model.*;
-import hu.cubix.hr.tomk99.repository.CompanyRepository;
-import hu.cubix.hr.tomk99.repository.EmployeeRepository;
-import hu.cubix.hr.tomk99.repository.PositionDetailsByCompanyRepository;
-import hu.cubix.hr.tomk99.repository.PositionRepository;
+import hu.cubix.hr.tomk99.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,15 +15,16 @@ public class InitDbService {
 
     @Autowired
     private CompanyRepository companyRepository;
-
     @Autowired
     private EmployeeRepository employeeRepository;
-
     @Autowired
     private PositionRepository positionRepository;
-
+    @Autowired
+    private TimeoffRequestRepository timeoffRequestRepository;
     @Autowired
     private PositionDetailsByCompanyRepository positionDetailsByCompanyRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
     public void initDb() {
@@ -35,25 +34,35 @@ public class InitDbService {
     }
 
     private void clearDb() {
+        timeoffRequestRepository.deleteAll();
         employeeRepository.deleteAll();
         companyRepository.deleteAll();
-        positionRepository.deleteAll();
         positionDetailsByCompanyRepository.deleteAll();
+        positionRepository.deleteAll();
     }
 
     private void insertTestData() {
-        Position unknownPosition = positionRepository.save(new Position("unknown", Qualification.COLLEGE));
+        Position position = positionRepository.save(new Position("Tester", Qualification.COLLEGE));
+        Position position2 = positionRepository.save(new Position("Test Leader", Qualification.UNIVERSITY));
 
         Company company = new Company(null, 987654, "InitCompany", "Initial St. 11", new ArrayList<>());
-        Employee employee = new Employee(null, "Init Name", unknownPosition, 17000, LocalDateTime.now());
+        Employee employee = new Employee(null, "John Doe", position, 17000, LocalDateTime.now());
+        employee.setUsername("user1");
+        employee.setPassword(passwordEncoder.encode("pass"));
+        Employee employee2 = new Employee(null, "John Smith", position2, 40000, LocalDateTime.now());
+        employee2.setUsername("user2");
+        employee2.setPassword(passwordEncoder.encode("pass"));
+        employee.setManager(employee2);
         employeeRepository.save(employee);
+        employeeRepository.save(employee2);
         company.addEmployee(employee);
+        company.addEmployee(employee2);
         companyRepository.save(company);
 
         PositionDetailsByCompany positionDetailsByCompany = new PositionDetailsByCompany();
         positionDetailsByCompany.setCompany(company);
         positionDetailsByCompany.setMinSalary(15000);
-        positionDetailsByCompany.setPosition(unknownPosition);
+        positionDetailsByCompany.setPosition(position);
         positionDetailsByCompanyRepository.save(positionDetailsByCompany);
     }
 }

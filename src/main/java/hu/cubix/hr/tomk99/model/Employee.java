@@ -14,6 +14,8 @@ public class Employee {
     private String name;
     private int salary;
     private LocalDateTime entryTime;
+    private String username;
+    private String password;
     @ManyToOne
     private Company company;
     @ManyToOne(cascade = CascadeType.ALL)
@@ -23,6 +25,9 @@ public class Employee {
 
     @OneToMany(mappedBy = "manager")
     private List<TimeoffRequest> receivedRequest;
+
+    @ManyToOne
+    private Employee manager;
 
     public Employee(Long employeeId, String name, Position position, int salary, LocalDateTime entryTime) {
         this.employeeId = employeeId;
@@ -68,6 +73,22 @@ public class Employee {
         this.entryTime = entryTime;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Company getCompany() {
         return company;
     }
@@ -98,6 +119,14 @@ public class Employee {
 
     public void setReceivedRequest(List<TimeoffRequest> receivedRequest) {
         this.receivedRequest = receivedRequest;
+    }
+
+    public Employee getManager() {
+        return manager;
+    }
+
+    public void setManager(Employee manager) {
+        this.manager = manager;
     }
 
     @Override

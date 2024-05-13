@@ -2,7 +2,6 @@ package hu.cubix.hr.tomk99.mapper;
 
 import hu.cubix.hr.tomk99.dto.TimeoffRequestDto;
 import hu.cubix.hr.tomk99.model.TimeoffRequest;
-import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -18,6 +17,7 @@ public interface TimeoffRequestMapper{
     @Mapping(target = "managerId", source = "manager.employeeId")
     TimeoffRequestDto requestToDto(TimeoffRequest request);
 
-    @InheritInverseConfiguration
+    @Mapping(target = "applicant", ignore = true)
+    @Mapping(target = "manager", ignore = true)
     TimeoffRequest dtoToRequest(TimeoffRequestDto requestDto);
 }

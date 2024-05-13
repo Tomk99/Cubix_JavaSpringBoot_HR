@@ -22,3 +22,8 @@ hr:
         10: 10
         5: 5
         2.5: 2
+logging:
+  level:
+    org:
+      springframework:
+        #security: DEBUG

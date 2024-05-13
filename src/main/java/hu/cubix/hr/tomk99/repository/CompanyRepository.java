@@ -11,14 +11,14 @@ import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
-    @Query("select distinct c from Company c left join fetch c.employees")
-    //@EntityGraph("Company.withEmployees")
-    //@Query("select c from Company c")
+    //@Query("select distinct c from Company c left join fetch c.employees")
+    @EntityGraph(attributePaths = {"employees","employees.position"})
+    @Query("select c from Company c")
     List<Company> findAllWithEmployees();
 
-    @Query("select distinct c from Company c left join fetch c.employees where c.id = :id")
-    //@EntityGraph("Company.withEmployees")
-    //@Query("select c from Company c where c.id = :id")
+    //@Query("select distinct c from Company c left join fetch c.employees where c.id = :id")
+    @EntityGraph(attributePaths = {"employees", "employees.position"})
+    @Query("select c from Company c where c.id = :id")
     Optional<Company> findByIdWithEmployees(Long id);
 
     @Query("select distinct c from Company c join c.employees e where e.salary > :minSalary")
