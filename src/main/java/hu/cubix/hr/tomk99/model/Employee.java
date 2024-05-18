@@ -28,6 +28,8 @@ public class Employee {
 
     @ManyToOne
     private Employee manager;
+    @OneToMany(mappedBy = "manager")
+    private List<Employee> applicants;
 
     public Employee(Long employeeId, String name, Position position, int salary, LocalDateTime entryTime) {
         this.employeeId = employeeId;
@@ -127,6 +129,14 @@ public class Employee {
 
     public void setManager(Employee manager) {
         this.manager = manager;
+    }
+
+    public List<Employee> getApplicants() {
+        return applicants;
+    }
+
+    public void setApplicants(List<Employee> applicants) {
+        this.applicants = applicants;
     }
 
     @Override

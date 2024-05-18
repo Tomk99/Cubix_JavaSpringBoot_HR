@@ -20,6 +20,6 @@ public class HrApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        //initDbService.initDb();
+        initDbService.initDb();
     }
 }

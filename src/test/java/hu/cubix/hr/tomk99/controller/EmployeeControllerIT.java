@@ -1,9 +1,14 @@
 package hu.cubix.hr.tomk99.controller;
 
 import hu.cubix.hr.tomk99.dto.EmployeeDto;
+import hu.cubix.hr.tomk99.dto.LoginDto;
+import hu.cubix.hr.tomk99.model.Employee;
+import hu.cubix.hr.tomk99.repository.EmployeeRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDateTime;
@@ -17,9 +22,37 @@ import static org.springframework.test.web.reactive.server.WebTestClient.*;
 public class EmployeeControllerIT {
 
     private static final String BASE_URI = "/api/employees";
+    public static final String TEST = "teszt";
 
     @Autowired
     WebTestClient webTestClient;
+    @Autowired
+    EmployeeRepository employeeRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    String jwt;
+
+    @BeforeEach
+    void init() {
+        if (employeeRepository.findByUsername(TEST).isEmpty()) {
+            Employee testUser = employeeRepository.save(new Employee());
+            testUser.setUsername(TEST);
+            testUser.setPassword(passwordEncoder.encode(TEST));
+            employeeRepository.save(testUser);
+        }
+        LoginDto body = new LoginDto();
+        body.setUsername(TEST);
+        body.setPassword(TEST);
+        jwt = webTestClient
+                .post()
+                .uri("/api/login")
+                .bodyValue(body)
+                .exchange()
+                .expectBody(String.class)
+                .returnResult()
+                .getResponseBody();
+    }
 
     @Test
     void testThatNewValidEmployeeCanBeSaved() {
@@ -88,6 +121,7 @@ public class EmployeeControllerIT {
 
         return webTestClient.post()
                 .uri(BASE_URI)
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(jwt))
                 .bodyValue(newEmployeeDto)
                 .exchange();
     }
@@ -95,6 +129,7 @@ public class EmployeeControllerIT {
     private List<EmployeeDto> getAll() {
         List<EmployeeDto> employeeDtos = webTestClient.get()
                 .uri(BASE_URI)
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(jwt))
                 .exchange()
                 .expectStatus()
                 .isOk()
@@ -109,6 +144,7 @@ public class EmployeeControllerIT {
     private ResponseSpec updateEmployee(EmployeeDto newEmployee) {
         return webTestClient.put()
                 .uri(BASE_URI + "/" + newEmployee.getId())
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(jwt))
                 .bodyValue(newEmployee)
                 .exchange();
     }

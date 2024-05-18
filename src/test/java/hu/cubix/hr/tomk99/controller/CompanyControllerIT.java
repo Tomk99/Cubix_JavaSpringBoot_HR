@@ -2,13 +2,15 @@ package hu.cubix.hr.tomk99.controller;
 
 import hu.cubix.hr.tomk99.dto.CompanyDto;
 import hu.cubix.hr.tomk99.dto.EmployeeDto;
-import hu.cubix.hr.tomk99.repository.CompanyRepository;
-import hu.cubix.hr.tomk99.repository.EmployeeRepository;
+import hu.cubix.hr.tomk99.dto.LoginDto;
+import hu.cubix.hr.tomk99.model.Employee;
+import hu.cubix.hr.tomk99.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CompanyControllerIT {
 
     private static final String BASE_URI = "/api/companies";
+    private static final String TEST = "teszt";
 
     @Autowired
     WebTestClient webTestClient;
@@ -29,13 +32,41 @@ public class CompanyControllerIT {
     EmployeeRepository employeeRepository;
     @Autowired
     CompanyRepository companyRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    TimeoffRequestRepository timeoffRequestRepository;
+    @Autowired
+    PositionDetailsByCompanyRepository positionDetailsByCompanyRepository;
+    @Autowired
+    PositionRepository positionRepository;
+
+    String jwt;
 
     @BeforeEach
-    void initDb() {
+    void init() {
+        positionDetailsByCompanyRepository.deleteAllInBatch();
         employeeRepository.deleteAllInBatch();
         companyRepository.deleteAllInBatch();
-    }
 
+        if (employeeRepository.findByUsername(TEST).isEmpty()) {
+            Employee testUser = employeeRepository.save(new Employee());
+            testUser.setUsername(TEST);
+            testUser.setPassword(passwordEncoder.encode(TEST));
+            employeeRepository.save(testUser);
+        }
+        LoginDto body = new LoginDto();
+        body.setUsername(TEST);
+        body.setPassword(TEST);
+        jwt = webTestClient
+                .post()
+                .uri("/api/login")
+                .bodyValue(body)
+                .exchange()
+                .expectBody(String.class)
+                .returnResult()
+                .getResponseBody();
+    }
     @Test
     void testAddNewEmployee() {
         CompanyDto companyDto = new CompanyDto(0L, 123123, "ABC", "ABC St. 3.", null);
@@ -132,14 +163,14 @@ public class CompanyControllerIT {
         List<CompanyDto> responseBodyBefore = getAll();
         int employeeListSizeBefore = getEmployeeListSize(responseBodyBefore);
 
-        webTestClient.delete().uri(BASE_URI+"/"+companyId+"/employees/"+employeeListSizeBefore).exchange();
+        EmployeeDto firstEmployee = Objects.requireNonNull(Objects.requireNonNull(responseBodyBefore.stream().findFirst().orElse(null)).getEmployees().stream().findFirst().orElse(null));
+        webTestClient.delete().uri(BASE_URI+"/"+companyId+"/employees/"+ firstEmployee.getId()).headers(httpHeaders -> httpHeaders.setBearerAuth(jwt)).exchange().expectStatus().isOk();
         List<CompanyDto> responseBodyAfter = getAll();
         int employeeListSizeAfter = getEmployeeListSize(responseBodyAfter);
         assertThat(employeeListSizeAfter).isEqualTo(employeeListSizeBefore-1);
 
-        EmployeeDto firstEmployee = Objects.requireNonNull(responseBodyBefore.get(0)).getEmployees().get(0);
-        EmployeeDto nonDeletedEmployee = Objects.requireNonNull(responseBodyAfter.stream().findFirst().orElse(null)).getEmployees().stream().findFirst().orElse(null);
-        assertThat(nonDeletedEmployee).isEqualTo(firstEmployee);
+        EmployeeDto firstEmployeeAfterDelete = Objects.requireNonNull(responseBodyAfter.stream().findFirst().orElse(null)).getEmployees().stream().findFirst().orElse(null);
+        assertThat(firstEmployeeAfterDelete).isNotEqualTo(firstEmployee);
     }
 
     private static int getEmployeeListSize(List<CompanyDto> responseBodyBefore) {
@@ -148,6 +179,7 @@ public class CompanyControllerIT {
 
     private List<CompanyDto> getAll() {
         return webTestClient.get().uri(BASE_URI+"?full=true")
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(jwt))
                 .exchange()
                 .expectBodyList(CompanyDto.class)
                 .returnResult()
@@ -156,18 +188,21 @@ public class CompanyControllerIT {
 
     private WebTestClient.ResponseSpec createCompany(CompanyDto companyDto) {
         return webTestClient.post().uri(BASE_URI)
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(jwt))
                 .bodyValue(companyDto)
                 .exchange();
     }
 
     private WebTestClient.ResponseSpec addNewEmployee(EmployeeDto newEmployeeDto, long companyId) {
         return webTestClient.post().uri(BASE_URI+"/"+ companyId +"/employees")
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(jwt))
                 .bodyValue(newEmployeeDto)
                 .exchange();
     }
 
     private WebTestClient.ResponseSpec replaceEmployeesInACompany(List<EmployeeDto> employeeDtos, long companyId) {
         return webTestClient.put().uri(BASE_URI+"/"+ companyId +"/employees")
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(jwt))
                 .bodyValue(employeeDtos)
                 .exchange();
     }

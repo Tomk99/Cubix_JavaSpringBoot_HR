@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -38,6 +37,7 @@ public class TimeoffRequestService {
         timeoffRequest.setApplicant(applicant);
         timeoffRequest.setManager(applicant.getManager());
         timeoffRequest.setRequestCreateTime(LocalDateTime.now());
+        timeoffRequest.setRequestStatus(RequestStatus.REQUESTED);
         return timeoffRequestRepository.save(timeoffRequest);
     }
     @Transactional
@@ -46,6 +46,7 @@ public class TimeoffRequestService {
         request.setStartDate(timeoffRequest.getStartDate());
         request.setEndDate(timeoffRequest.getEndDate());
         request.setRequestCreateTime(LocalDateTime.now());
+        timeoffRequest.setRequestStatus(RequestStatus.REQUESTED);
         return request;
     }
 
